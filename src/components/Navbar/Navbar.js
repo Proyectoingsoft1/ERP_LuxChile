@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 const Navbar = () =>{
+    const location = useLocation();
+  const id = location.state?.id || 'Invitado';
     
     function Button(props) {
         return(
-            <Link to={props.Page}>
+            <Link to={props.Page} state={{id}}>
                 <button className='button'>{props.label}</button>
             </Link>
         )
