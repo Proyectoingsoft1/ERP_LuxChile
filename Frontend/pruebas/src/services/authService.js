@@ -13,6 +13,10 @@ const authService = {
       setToken(token);
       setUsuario(usuario);
       
+      console.log('âœ… SCRUM-77: Token guardado en localStorage');
+      console.log('í³¦ Token:', localStorage.getItem('token') ? 'Guardado correctamente' : 'ERROR');
+      console.log('í±¤ Usuario:', localStorage.getItem('usuario') ? 'Guardado correctamente' : 'ERROR');
+      
       return response.data;
     } catch (error) {
       throw error.response?.data?.error || 'Error al iniciar sesiÃ³n';
