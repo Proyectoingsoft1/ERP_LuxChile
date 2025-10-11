@@ -14,8 +14,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuraci√≥n de CORS
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
 // Middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -78,6 +85,8 @@ app.listen(PORT, () => {
   console.log(`\nÌ∫Ä Servidor corriendo en http://localhost:${PORT}`);
   console.log(`Ì≥ö Documentaci√≥n: http://localhost:${PORT}/`);
   console.log(`Ì∑™ Test endpoint: http://localhost:${PORT}/api/test`);
+  console.log(`Ìºç CORS habilitado para: ${corsOptions.origin}`);
+  console.log(`‚öôÔ∏è  Entorno: ${process.env.NODE_ENV || 'development'}`);
   console.log(`\nÌ¥ê Credenciales de prueba:`);
   console.log(`   Email: juan.perez@luxchile.com`);
   console.log(`   Password: password123\n`);
