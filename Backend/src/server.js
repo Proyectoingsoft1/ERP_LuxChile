@@ -1,0 +1,84 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+// Importar rutas
+import authRoutes from './routes/auth.js';
+import vehiculosRoutes from './routes/vehiculos.js';
+import cargasRoutes from './routes/cargas.js';
+import rutasRoutes from './routes/rutas.js';
+
+// Configurar variables de entorno
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
+
+// Ruta de bienvenida
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Ì∫ö API ERP LuxChile - Sistema de Log√≠stica',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      vehiculos: '/api/vehiculos',
+      cargas: '/api/cargas',
+      rutas: '/api/rutas',
+    },
+    docs: 'Consulta el README.md para m√°s informaci√≥n',
+  });
+});
+
+// Rutas de la API
+app.use('/api/auth', authRoutes);
+app.use('/api/vehiculos', vehiculosRoutes);
+app.use('/api/cargas', cargasRoutes);
+app.use('/api/rutas', rutasRoutes);
+
+// Ruta de test (sin autenticaci√≥n)
+app.get('/api/test', (req, res) => {
+  res.json({
+    message: 'API funcionando correctamente',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+  });
+});
+
+// Manejo de rutas no encontradas
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: 'Ruta no encontrada',
+    path: req.path,
+    method: req.method,
+  });
+});
+
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ 
+    error: 'Error interno del servidor',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Algo sali√≥ mal',
+  });
+});
+
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`\nÌ∫Ä Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Ì≥ö Documentaci√≥n: http://localhost:${PORT}/`);
+  console.log(`Ì∑™ Test endpoint: http://localhost:${PORT}/api/test`);
+  console.log(`\nÌ¥ê Credenciales de prueba:`);
+  console.log(`   Email: juan.perez@luxchile.com`);
+  console.log(`   Password: password123\n`);
+});
