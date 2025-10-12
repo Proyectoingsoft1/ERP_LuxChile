@@ -1,3 +1,5 @@
+import BadgeEstado from './BadgeEstado';
+
 function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
   const getEstadoColor = (estado) => {
     const colores = {
@@ -55,7 +57,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
             color: '#2c3e50',
             marginBottom: '8px',
           }}>
-            {vehiculo.patente}
+            Ì∫õ {vehiculo.patente}
           </div>
           <div style={{
             fontSize: '16px',
@@ -66,23 +68,8 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           </div>
         </div>
 
-        {/* Badge de estado */}
-        <div style={{
-          padding: '8px 16px',
-          borderRadius: '20px',
-          fontSize: '13px',
-          fontWeight: '600',
-          backgroundColor: estadoStyle.bg,
-          color: estadoStyle.color,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-        }}>
-          <span>{estadoStyle.icon}</span>
-          <span style={{ textTransform: 'capitalize' }}>
-            {vehiculo.estado.replace('_', ' ')}
-          </span>
-        </div>
+        {/* SCRUM-90: Badge mejorado con componente reutilizable */}
+        <BadgeEstado estado={vehiculo.estado} size="medium" />
       </div>
 
       {/* Informaci√≥n del veh√≠culo */}
@@ -104,53 +91,45 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           </div>
         </div>
 
-        <div>
-          <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>
-            Ubicaci√≥n actual
+        {vehiculo.ubicacionActualLat && vehiculo.ubicacionActualLng && (
+          <div>
+            <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>
+              Ubicaci√≥n GPS
+            </div>
+            <div style={{ fontSize: '13px', fontWeight: '600', color: '#667eea' }}>
+              Ì≥ç {vehiculo.ubicacionActualLat.toFixed(4)}, {vehiculo.ubicacionActualLng.toFixed(4)}
+            </div>
           </div>
-          <div style={{ fontSize: '14px', fontWeight: '600', color: '#2c3e50' }}>
-            {vehiculo.ubicacionActualLat && vehiculo.ubicacionActualLng ? (
-              <span>Ì≥ç Rastreando</span>
-            ) : (
-              <span style={{ color: '#95a5a6' }}>Ì≥ç Sin ubicaci√≥n</span>
-            )}
+        )}
+
+        {vehiculo.sensores && vehiculo.sensores.length > 0 && (
+          <div>
+            <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>
+              Sensores activos
+            </div>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#27ae60' }}>
+              Ì≥° {vehiculo.sensores.length}
+            </div>
           </div>
-        </div>
+        )}
+
+        {vehiculo.rutas && vehiculo.rutas.length > 0 && (
+          <div>
+            <div style={{ fontSize: '12px', color: '#7f8c8d', marginBottom: '4px' }}>
+              Rutas asignadas
+            </div>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: '#e67e22' }}>
+              Ì∑∫Ô∏è {vehiculo.rutas.length}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Informaci√≥n adicional */}
-      {vehiculo.sensores && vehiculo.sensores.length > 0 && (
-        <div style={{
-          padding: '12px',
-          backgroundColor: '#e8f4fd',
-          borderRadius: '8px',
-          marginBottom: '16px',
-          fontSize: '13px',
-          color: '#004085',
-        }}>
-          Ì¥ç {vehiculo.sensores.length} sensores activos
-        </div>
-      )}
-
-      {vehiculo.rutas && vehiculo.rutas.length > 0 && (
-        <div style={{
-          padding: '12px',
-          backgroundColor: '#fff3cd',
-          borderRadius: '8px',
-          marginBottom: '16px',
-          fontSize: '13px',
-          color: '#856404',
-        }}>
-          Ì≥ã {vehiculo.rutas.length} {vehiculo.rutas.length === 1 ? 'ruta asignada' : 'rutas asignadas'}
-        </div>
-      )}
-
-      {/* Acciones */}
+      {/* Botones de acci√≥n */}
       <div style={{
         display: 'flex',
-        gap: '10px',
-        paddingTop: '16px',
-        borderTop: '1px solid #e9ecef',
+        gap: '8px',
+        marginTop: '16px',
       }}>
         <button
           onClick={() => onVerDetalle(vehiculo)}
@@ -169,13 +148,14 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#5568d3'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
         >
-          Ì±ÅÔ∏è Ver detalle
+          Ì±ÅÔ∏è Ver
         </button>
 
         <button
           onClick={() => onEditar(vehiculo)}
           style={{
-            padding: '10px 16px',
+            flex: 1,
+            padding: '10px',
             backgroundColor: '#f39c12',
             color: 'white',
             border: 'none',
@@ -188,13 +168,14 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#e67e22'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#f39c12'}
         >
-          ‚úèÔ∏è
+          ‚úèÔ∏è Editar
         </button>
 
         <button
           onClick={() => onEliminar(vehiculo)}
           style={{
-            padding: '10px 16px',
+            flex: 1,
+            padding: '10px',
             backgroundColor: '#e74c3c',
             color: 'white',
             border: 'none',
@@ -207,7 +188,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'}
         >
-          Ì∑ëÔ∏è
+          Ì∑ëÔ∏è Eliminar
         </button>
       </div>
     </div>
