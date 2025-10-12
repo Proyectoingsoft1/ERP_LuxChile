@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
-import VehiculoCard from './VehiculoCard'; // SCRUM-87
+import FiltrosVehiculos from './FiltrosVehiculos';
+import FormularioVehiculo from './FormularioVehiculo';
 import { isAuthenticated, vehiculosService } from '../../services';
 
 function Bodegas() {
@@ -9,9 +10,19 @@ function Bodegas() {
   const [vehiculos, setVehiculos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [vistaActual, setVistaActual] = useState('grid'); // grid o tabla
+  
+  // SCRUM-88: Estado para filtros
+  const [filtros, setFiltros] = useState({
+    estado: 'todos',
+    busqueda: '',
+    ordenar: 'reciente'
+  });
+
+  // SCRUM-89: Estado para el modal
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   useEffect(() => {
+    // Verificar autenticaci√≥n
     if (!isAuthenticated()) {
       navigate('/', { replace: true });
       return;
@@ -20,14 +31,15 @@ function Bodegas() {
     cargarVehiculos();
   }, [navigate]);
 
+  // SCRUM-86: Funci√≥n para cargar veh√≠culos
   const cargarVehiculos = async () => {
     try {
       setLoading(true);
       setError('');
-      
+
       const data = await vehiculosService.obtenerTodos();
       console.log('‚úÖ Veh√≠culos obtenidos:', data);
-      
+
       setVehiculos(data);
     } catch (err) {
       console.error('‚ùå Error al cargar veh√≠culos:', err);
@@ -37,30 +49,61 @@ function Bodegas() {
     }
   };
 
-  // SCRUM-87: Handlers para acciones
-  const handleVerDetalle = (vehiculo) => {
-    console.log('Ver detalle:', vehiculo);
-    alert(`Detalle del veh√≠culo\n\nPatente: ${vehiculo.patente}\nMarca: ${vehiculo.marca} ${vehiculo.modelo}\nCapacidad: ${vehiculo.capacidadCarga} kg\nEstado: ${vehiculo.estado}`);
+  // SCRUM-88: Funci√≥n para cambiar filtros
+  const handleCambioFiltro = (campo, valor) => {
+    setFiltros(prev => ({
+      ...prev,
+      [campo]: valor
+    }));
   };
 
-  const handleEditar = (vehiculo) => {
-    console.log('Editar:', vehiculo);
-    alert(`Funci√≥n editar veh√≠culo ${vehiculo.patente}\n(Pr√≥ximamente)`);
+  // SCRUM-89: Funci√≥n para abrir modal
+  const handleAbrirModal = () => {
+    setModalAbierto(true);
   };
 
-  const handleEliminar = async (vehiculo) => {
-    if (!window.confirm(`¬øEst√°s seguro de eliminar el veh√≠culo ${vehiculo.patente}?`)) {
-      return;
-    }
-
-    try {
-      await vehiculosService.eliminar(vehiculo.id);
-      alert('Veh√≠culo eliminado correctamente');
-      cargarVehiculos(); // Recargar lista
-    } catch (err) {
-      alert(`Error al eliminar: ${err}`);
-    }
+  // SCRUM-89: Funci√≥n para cerrar modal
+  const handleCerrarModal = () => {
+    setModalAbierto(false);
   };
+
+  // SCRUM-89: Callback cuando se crea un veh√≠culo
+  const handleVehiculoCreado = () => {
+    cargarVehiculos(); // Recargar lista
+  };
+
+  // SCRUM-88: Aplicar filtros y ordenamiento
+  const vehiculosFiltrados = vehiculos
+    .filter(vehiculo => {
+      // Filtro por estado
+      if (filtros.estado !== 'todos' && vehiculo.estado !== filtros.estado) {
+        return false;
+      }
+      
+      // Filtro por b√∫squeda (patente, marca o modelo)
+      if (filtros.busqueda) {
+        const busqueda = filtros.busqueda.toLowerCase();
+        return (
+          vehiculo.patente.toLowerCase().includes(busqueda) ||
+          vehiculo.marca.toLowerCase().includes(busqueda) ||
+          vehiculo.modelo.toLowerCase().includes(busqueda)
+        );
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      // Ordenamiento
+      switch (filtros.ordenar) {
+        case 'patente':
+          return a.patente.localeCompare(b.patente);
+        case 'capacidad':
+          return b.capacidadCarga - a.capacidadCarga;
+        case 'reciente':
+        default:
+          return new Date(b.created_at) - new Date(a.created_at);
+      }
+    });
 
   if (loading) {
     return (
@@ -84,46 +127,56 @@ function Bodegas() {
   return (
     <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh' }}>
       <Navbar />
-      
+
       <div style={{ padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{
+          marginBottom: '30px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '30px',
         }}>
           <div>
             <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', color: '#2c3e50' }}>
-              Ì∫ö Gesti√≥n de Veh√≠culos
+              Gesti√≥n de Veh√≠culos
             </h1>
             <p style={{ color: '#7f8c8d', fontSize: '16px', margin: 0 }}>
               Administra la flota de veh√≠culos de la empresa
             </p>
           </div>
 
-          {/* Bot√≥n agregar veh√≠culo */}
+          {/* SCRUM-89: Bot√≥n agregar veh√≠culo */}
+          {/* SCRUM-89: Bot√≥n agregar veh√≠culo */}
           <button
-            onClick={() => alert('Formulario agregar veh√≠culo (Pr√≥ximamente)')}
+            onClick={handleAbrirModal}
             style={{
-              padding: '12px 24px',
-              backgroundColor: '#27ae60',
+              padding: '14px 28px',
+              backgroundColor: '#667eea',
               color: 'white',
               border: 'none',
               borderRadius: '10px',
-              fontSize: '16px',
+              fontSize: '15px',
               fontWeight: '600',
               cursor: 'pointer',
+              transition: 'all 0.2s',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              transition: 'background-color 0.2s',
+              gap: '10px',
+              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
             }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#229954'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#27ae60'}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#5568d3';
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#667eea';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+            }}
           >
-            <span style={{ fontSize: '20px' }}>‚ûï</span>
-            Agregar Veh√≠culo
+            <span style={{ fontSize: '20px' }}>+</span>
+            <span>Agregar Veh√≠culo</span>
           </button>
         </div>
 
@@ -144,91 +197,155 @@ function Bodegas() {
           </div>
         )}
 
-        {/* Contador y selector de vista */}
+        {/* SCRUM-88: Componente de Filtros */}
+        <FiltrosVehiculos 
+          filtros={filtros}
+          onCambioFiltro={handleCambioFiltro}
+          totalVehiculos={vehiculosFiltrados.length}
+        />
+
+        {/* Contenedor principal */}
         <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-          padding: '16px 20px',
           backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
         }}>
-          <div style={{ fontSize: '15px', color: '#666' }}>
-            Ì≥ã <strong style={{ color: '#2c3e50' }}>{vehiculos.length}</strong> {vehiculos.length === 1 ? 'veh√≠culo registrado' : 'veh√≠culos registrados'}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+            paddingBottom: '16px',
+            borderBottom: '2px solid #f0f0f0',
+          }}>
+            <h2 style={{ margin: 0, fontSize: '24px', color: '#2c3e50' }}>
+              Lista de Veh√≠culos
+            </h2>
+            <span style={{
+              backgroundColor: '#667eea',
+              color: 'white',
+              padding: '8px 20px',
+              borderRadius: '24px',
+              fontSize: '15px',
+              fontWeight: '700',
+            }}>
+              {vehiculos.length} {vehiculos.length === 1 ? 'veh√≠culo' : 'veh√≠culos'}
+            </span>
           </div>
 
-          {/* Toggle vista (para futura implementaci√≥n) */}
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={() => setVistaActual('grid')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: vistaActual === 'grid' ? '#667eea' : '#e9ecef',
-                color: vistaActual === 'grid' ? 'white' : '#666',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
-              Ì¥≤ Cards
-            </button>
-            <button
-              onClick={() => setVistaActual('tabla')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: vistaActual === 'tabla' ? '#667eea' : '#e9ecef',
-                color: vistaActual === 'tabla' ? 'white' : '#666',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
-              Ì≥ã Tabla
-            </button>
-          </div>
+          {/* Lista de veh√≠culos filtrados */}
+          {vehiculosFiltrados.length === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '60px 20px',
+              color: '#999',
+            }}>
+              <div style={{ fontSize: '64px', marginBottom: '20px' }}>
+                {vehiculos.length === 0 ? 'Ì∫õ' : 'Ì¥ç'}
+              </div>
+              <h3 style={{ color: '#666', fontWeight: '400' }}>
+                {vehiculos.length === 0 
+                  ? 'No hay veh√≠culos registrados' 
+                  : 'No se encontraron veh√≠culos con estos filtros'}
+              </h3>
+              <p style={{ fontSize: '14px', marginBottom: '20px' }}>
+                {vehiculos.length === 0 
+                  ? 'Agrega el primer veh√≠culo para comenzar'
+                  : 'Intenta cambiar los filtros de b√∫squeda'}
+              </p>
+              {vehiculos.length === 0 && (
+                <button
+                  onClick={handleAbrirModal}
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: '#667eea',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    marginTop: '12px',
+                  }}
+                >
+                  + Agregar primer veh√≠culo
+                </button>
+              )}
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gap: '16px',
+            }}>
+              {vehiculosFiltrados.map((vehiculo) => (
+                <div
+                  key={vehiculo.id}
+                  style={{
+                    padding: '20px',
+                    border: '2px solid #e9ecef',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#667eea';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e9ecef';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>
+                      {vehiculo.patente}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#666' }}>
+                      {vehiculo.marca} {vehiculo.modelo}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#999', marginTop: '4px' }}>
+                      Capacidad: {vehiculo.capacidadCarga.toLocaleString()} kg
+                    </div>
+                  </div>
+
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{
+                      display: 'inline-block',
+                      padding: '6px 16px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      backgroundColor: 
+                        vehiculo.estado === 'disponible' ? '#d4edda' :
+                        vehiculo.estado === 'en_ruta' ? '#fff3cd' :
+                        vehiculo.estado === 'mantenimiento' ? '#f8d7da' : '#e9ecef',
+                      color:
+                        vehiculo.estado === 'disponible' ? '#155724' :
+                        vehiculo.estado === 'en_ruta' ? '#856404' :
+                        vehiculo.estado === 'mantenimiento' ? '#721c24' : '#495057',
+                    }}>
+                      {vehiculo.estado === 'disponible' ? '‚úÖ Disponible' :
+                       vehiculo.estado === 'en_ruta' ? 'Ì∫õ En Ruta' :
+                       vehiculo.estado === 'mantenimiento' ? 'Ì¥ß Mantenimiento' :
+                       vehiculo.estado}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* SCRUM-87: Grid de veh√≠culos con VehiculoCard */}
-        {vehiculos.length === 0 ? (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '60px 20px',
-            borderRadius: '16px',
-            textAlign: 'center',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-          }}>
-            <div style={{ fontSize: '64px', marginBottom: '20px' }}>Ì∫ö</div>
-            <h3 style={{ color: '#666', fontWeight: '400', marginBottom: '10px' }}>
-              No hay veh√≠culos registrados
-            </h3>
-            <p style={{ fontSize: '14px', color: '#999' }}>
-              Agrega el primer veh√≠culo para comenzar
-            </p>
-          </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-            gap: '24px',
-          }}>
-            {vehiculos.map((vehiculo) => (
-              <VehiculoCard
-                key={vehiculo.id}
-                vehiculo={vehiculo}
-                onVerDetalle={handleVerDetalle}
-                onEditar={handleEditar}
-                onEliminar={handleEliminar}
-              />
-            ))}
-          </div>
-        )}
       </div>
+
+      {/* SCRUM-89: Modal del formulario */}
+      <FormularioVehiculo
+        isOpen={modalAbierto}
+        onClose={handleCerrarModal}
+        onVehiculoCreado={handleVehiculoCreado}
+      />
     </div>
   );
 }
