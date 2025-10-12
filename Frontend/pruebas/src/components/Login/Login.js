@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { authService } from '../../services';
+import { useState, useEffect } from 'react';
+import { authService, isAuthenticated } from '../../services';
 
 function Login() {
   const navigate = useNavigate();
@@ -8,7 +8,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
-  const [loading, setLoading] = useState(false); // SCRUM-79: Estado de loading
+  const [loading, setLoading] = useState(false);
+
+  // SCRUM-80: Redirigir si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/main', { replace: true });
+    }
+  }, [navigate]);
 
   const validarCampos = () => {
     const errores = {};
@@ -37,35 +44,31 @@ function Login() {
       return;
     }
 
-    setLoading(true); // SCRUM-79: Iniciar loading
+    setLoading(true);
 
     try {
       const response = await authService.login(email, password);
       console.log("✅ Login exitoso:", response.usuario);
-      navigate('/main', { state: { id: response.usuario.id } });
+      
+      // SCRUM-80: Redirigir al dashboard (ya no necesitamos pasar state)
+      navigate('/main', { replace: true });
       
     } catch (err) {
-      // SCRUM-79: Mostrar mensajes de error específicos del backend
       console.error("❌ Error en login:", err);
       
-      // Determinar tipo de error
       if (typeof err === 'string') {
-        // Error del backend (credenciales incorrectas, etc.)
         setError(err);
       } else if (err.message && err.message.includes('Network')) {
-        // Error de conexión
         setError('⚠️ No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
       } else {
-        // Error genérico
         setError('❌ Error al iniciar sesión. Por favor, intenta nuevamente.');
       }
       
     } finally {
-      setLoading(false); // SCRUM-79: Terminar loading
+      setLoading(false);
     }
   };
 
-  // Permitir login con Enter
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !loading) {
       handleLogin();
@@ -77,7 +80,6 @@ function Login() {
     if (fieldErrors.email) {
       setFieldErrors({ ...fieldErrors, email: '' });
     }
-    // SCRUM-79: Limpiar error general al escribir
     if (error) setError('');
   };
 
@@ -86,7 +88,6 @@ function Login() {
     if (fieldErrors.password) {
       setFieldErrors({ ...fieldErrors, password: '' });
     }
-    // SCRUM-79: Limpiar error general al escribir
     if (error) setError('');
   };
 
@@ -95,7 +96,6 @@ function Login() {
       <h1>��� ERP LuxChile</h1>
       <h2>Inicio de sesión</h2>
       
-      {/* Campo Email */}
       <div style={{ marginBottom: '20px' }}>
         <label htmlFor="email" style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
           Email
@@ -125,7 +125,6 @@ function Login() {
         )}
       </div>
       
-      {/* Campo Contraseña */}
       <div style={{ marginBottom: '20px' }}>
         <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
           Contraseña
@@ -155,7 +154,6 @@ function Login() {
         )}
       </div>
 
-      {/* SCRUM-79: Error general mejorado */}
       {error && (
         <div style={{
           backgroundColor: '#fee',
@@ -170,7 +168,6 @@ function Login() {
         </div>
       )}
       
-      {/* SCRUM-79: Botón con estado de loading */}
       <button 
         onClick={handleLogin}
         disabled={loading}
@@ -190,7 +187,6 @@ function Login() {
         {loading ? '⏳ Iniciando sesión...' : '��� Iniciar sesión'}
       </button>
       
-      {/* Credenciales de prueba */}
       <div style={{ 
         marginTop: '30px', 
         padding: '15px',
