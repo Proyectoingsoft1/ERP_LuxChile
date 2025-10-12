@@ -8,39 +8,42 @@ function Main() {
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [rutasActivas, setRutasActivas] = useState([]); // SCRUM-85
+  const [rutasActivas, setRutasActivas] = useState([]);
+  const [estadisticas, setEstadisticas] = useState(null); // SCRUM-125
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Verificar autenticaci√≥n
     if (!isAuthenticated()) {
-      console.log('‚ùå No autenticado, redirigiendo a login...');
       navigate('/', { replace: true });
       return;
     }
 
-    // Obtener usuario
     const usuarioData = getUsuario();
     if (usuarioData) {
-      console.log('‚úÖ Usuario autenticado:', usuarioData);
       setUsuario(usuarioData);
-      cargarRutasActivas(); // SCRUM-85: Cargar rutas activas
+      cargarDatosDashboard(); // SCRUM-125: Cargar todo
     } else {
-      console.log('‚ö†Ô∏è No se encontr√≥ usuario, redirigiendo...');
       navigate('/', { replace: true });
     }
   }, [navigate]);
 
-  // SCRUM-85: Funci√≥n para cargar rutas activas
-  const cargarRutasActivas = async () => {
+  // SCRUM-125: Cargar rutas activas y estad√≠sticas
+  const cargarDatosDashboard = async () => {
     try {
       setLoading(true);
-      const data = await dashboardService.obtenerRutasActivas();
-      console.log('‚úÖ Rutas activas obtenidas:', data);
-      setRutasActivas(data);
+      
+      // Cargar ambos en paralelo
+      const [rutasData, estadisticasData] = await Promise.all([
+        dashboardService.obtenerRutasActivas(),
+        dashboardService.obtenerEstadisticas(),
+      ]);
+      
+      console.log('‚úÖ Datos del dashboard obtenidos');
+      setRutasActivas(rutasData);
+      setEstadisticas(estadisticasData);
       setError('');
     } catch (err) {
-      console.error('‚ùå Error al cargar rutas activas:', err);
+      console.error('‚ùå Error al cargar dashboard:', err);
       setError(err);
     } finally {
       setLoading(false);
@@ -63,18 +66,18 @@ function Main() {
   }
 
   return (
-    <div>
+    <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh' }}>
       <Navbar />
-      <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header del Dashboard */}
+      <div style={{ padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
         <div style={{ marginBottom: '30px' }}>
-          <h1>Ìæâ Bienvenido, {usuario.nombre}</h1>
-          <p style={{ color: '#666', fontSize: '16px' }}>
+          <h1 style={{ margin: '0 0 10px 0' }}>Ìæâ Bienvenido, {usuario.nombre}</h1>
+          <p style={{ color: '#666', fontSize: '16px', margin: 0 }}>
             Dashboard principal - {usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
           </p>
         </div>
 
-        {/* Error si existe */}
+        {/* Error */}
         {error && (
           <div style={{
             backgroundColor: '#fee',
@@ -87,13 +90,100 @@ function Main() {
           </div>
         )}
 
-        {/* SCRUM-85: Secci√≥n de Rutas Activas */}
+        {/* SCRUM-125: Tarjetas de Estad√≠sticas */}
+        {estadisticas && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '20px',
+            marginBottom: '30px',
+          }}>
+            {/* Tarjeta: Total Veh√≠culos */}
+            <div style={{
+              backgroundColor: 'white',
+              padding: '25px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderLeft: '4px solid #667eea',
+            }}>
+              <div style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                Ì∫ö Total Veh√≠culos
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '10px' }}>
+                {estadisticas.totales.vehiculos}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                ‚úÖ {estadisticas.vehiculos.disponibles} disponibles ‚Ä¢ 
+                Ì∫õ {estadisticas.vehiculos.enRuta} en ruta
+              </div>
+            </div>
+
+            {/* Tarjeta: Total Cargas */}
+            <div style={{
+              backgroundColor: 'white',
+              padding: '25px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderLeft: '4px solid #f39c12',
+            }}>
+              <div style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                Ì≥¶ Total Cargas
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '10px' }}>
+                {estadisticas.totales.cargas}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                ‚è≥ {estadisticas.cargas.pendientes} pendientes ‚Ä¢ 
+                Ì∫ö {estadisticas.cargas.enTransito} en tr√°nsito
+              </div>
+            </div>
+
+            {/* Tarjeta: Rutas Activas */}
+            <div style={{
+              backgroundColor: 'white',
+              padding: '25px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderLeft: '4px solid #27ae60',
+            }}>
+              <div style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                Ì∑∫Ô∏è Rutas Activas
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '10px' }}>
+                {estadisticas.rutas.activas}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                ‚úÖ {estadisticas.rutas.completadas} completadas
+              </div>
+            </div>
+
+            {/* Tarjeta: Usuarios/Trabajadores */}
+            <div style={{
+              backgroundColor: 'white',
+              padding: '25px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              borderLeft: '4px solid #e74c3c',
+            }}>
+              <div style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                Ì±• Total Usuarios
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '10px' }}>
+                {estadisticas.totales.usuarios}
+              </div>
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                Personal registrado en el sistema
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Secci√≥n de Rutas Activas */}
         <div style={{
           backgroundColor: 'white',
-          padding: '20px',
+          padding: '25px',
           borderRadius: '12px',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          marginBottom: '30px',
         }}>
           <div style={{
             display: 'flex',
@@ -105,7 +195,7 @@ function Main() {
             <span style={{
               backgroundColor: '#667eea',
               color: 'white',
-              padding: '5px 15px',
+              padding: '6px 16px',
               borderRadius: '20px',
               fontSize: '14px',
               fontWeight: '600',
@@ -115,15 +205,17 @@ function Main() {
           </div>
 
           {rutasActivas.length === 0 ? (
-            <p style={{ color: '#666', textAlign: 'center', padding: '20px' }}>
-              No hay rutas activas en este momento
-            </p>
+            <div style={{
+              textAlign: 'center',
+              padding: '40px',
+              color: '#666',
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>Ì∫õ</div>
+              <p>No hay rutas activas en este momento</p>
+            </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-              }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#f8f9fa' }}>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6' }}>Veh√≠culo</th>
@@ -180,7 +272,6 @@ function Main() {
           )}
         </div>
 
-        {/* Debug del token */}
         <TokenDebug />
       </div>
     </div>
