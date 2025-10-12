@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js';
 import vehiculosRoutes from './routes/vehiculos.js';
 import cargasRoutes from './routes/cargas.js';
 import rutasRoutes from './routes/rutas.js';
+import dashboardRoutes from './routes/dashboard.js';
 
 // Configurar variables de entorno
 dotenv.config();
@@ -52,6 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/vehiculos', vehiculosRoutes);
 app.use('/api/cargas', cargasRoutes);
 app.use('/api/rutas', rutasRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Ruta de test (sin autenticación)
 app.get('/api/test', (req, res) => {
