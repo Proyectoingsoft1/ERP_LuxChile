@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import FiltrosVehiculos from './FiltrosVehiculos';
 import { isAuthenticated, vehiculosService } from '../../services';
 
 function Bodegas() {
@@ -8,6 +9,13 @@ function Bodegas() {
   const [vehiculos, setVehiculos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // SCRUM-88: Estado para filtros
+  const [filtros, setFiltros] = useState({
+    estado: 'todos',
+    busqueda: '',
+    ordenar: 'reciente'
+  });
 
   useEffect(() => {
     // Verificar autenticaci√≥n
@@ -24,10 +32,10 @@ function Bodegas() {
     try {
       setLoading(true);
       setError('');
-      
+
       const data = await vehiculosService.obtenerTodos();
       console.log('‚úÖ Veh√≠culos obtenidos:', data);
-      
+
       setVehiculos(data);
     } catch (err) {
       console.error('‚ùå Error al cargar veh√≠culos:', err);
@@ -36,6 +44,47 @@ function Bodegas() {
       setLoading(false);
     }
   };
+
+  // SCRUM-88: Funci√≥n para cambiar filtros
+  const handleCambioFiltro = (campo, valor) => {
+    setFiltros(prev => ({
+      ...prev,
+      [campo]: valor
+    }));
+  };
+
+  // SCRUM-88: Aplicar filtros y ordenamiento
+  const vehiculosFiltrados = vehiculos
+    .filter(vehiculo => {
+      // Filtro por estado
+      if (filtros.estado !== 'todos' && vehiculo.estado !== filtros.estado) {
+        return false;
+      }
+      
+      // Filtro por b√∫squeda (patente, marca o modelo)
+      if (filtros.busqueda) {
+        const busqueda = filtros.busqueda.toLowerCase();
+        return (
+          vehiculo.patente.toLowerCase().includes(busqueda) ||
+          vehiculo.marca.toLowerCase().includes(busqueda) ||
+          vehiculo.modelo.toLowerCase().includes(busqueda)
+        );
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      // Ordenamiento
+      switch (filtros.ordenar) {
+        case 'patente':
+          return a.patente.localeCompare(b.patente);
+        case 'capacidad':
+          return b.capacidadCarga - a.capacidadCarga;
+        case 'reciente':
+        default:
+          return new Date(b.created_at) - new Date(a.created_at);
+      }
+    });
 
   if (loading) {
     return (
@@ -59,12 +108,12 @@ function Bodegas() {
   return (
     <div style={{ backgroundColor: '#f5f7fa', minHeight: '100vh' }}>
       <Navbar />
-      
+
       <div style={{ padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: '30px' }}>
           <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', color: '#2c3e50' }}>
-            Ì∫ö Gesti√≥n de Veh√≠culos
+            Gesti√≥n de Veh√≠culos
           </h1>
           <p style={{ color: '#7f8c8d', fontSize: '16px', margin: 0 }}>
             Administra la flota de veh√≠culos de la empresa
@@ -87,6 +136,13 @@ function Bodegas() {
             <span>{error}</span>
           </div>
         )}
+
+        {/* SCRUM-88: Componente de Filtros */}
+        <FiltrosVehiculos 
+          filtros={filtros}
+          onCambioFiltro={handleCambioFiltro}
+          totalVehiculos={vehiculosFiltrados.length}
+        />
 
         {/* Contenedor principal */}
         <div style={{
@@ -118,23 +174,31 @@ function Bodegas() {
             </span>
           </div>
 
-          {/* Lista simple de veh√≠culos (SCRUM-86) */}
-          {vehiculos.length === 0 ? (
+          {/* Lista de veh√≠culos filtrados */}
+          {vehiculosFiltrados.length === 0 ? (
             <div style={{
               textAlign: 'center',
               padding: '60px 20px',
               color: '#999',
             }}>
-              <div style={{ fontSize: '64px', marginBottom: '20px' }}>Ì∫ö</div>
-              <h3 style={{ color: '#666', fontWeight: '400' }}>No hay veh√≠culos registrados</h3>
-              <p style={{ fontSize: '14px' }}>Agrega el primer veh√≠culo para comenzar</p>
+              <div style={{ fontSize: '64px', marginBottom: '20px' }}>Ì¥ç</div>
+              <h3 style={{ color: '#666', fontWeight: '400' }}>
+                {vehiculos.length === 0 
+                  ? 'No hay veh√≠culos registrados' 
+                  : 'No se encontraron veh√≠culos con estos filtros'}
+              </h3>
+              <p style={{ fontSize: '14px' }}>
+                {vehiculos.length === 0 
+                  ? 'Agrega el primer veh√≠culo para comenzar'
+                  : 'Intenta cambiar los filtros de b√∫squeda'}
+              </p>
             </div>
           ) : (
             <div style={{
               display: 'grid',
               gap: '16px',
             }}>
-              {vehiculos.map((vehiculo) => (
+              {vehiculosFiltrados.map((vehiculo) => (
                 <div
                   key={vehiculo.id}
                   style={{
@@ -166,7 +230,7 @@ function Bodegas() {
                       Capacidad: {vehiculo.capacidadCarga.toLocaleString()} kg
                     </div>
                   </div>
-                  
+
                   <div style={{ textAlign: 'right' }}>
                     <div style={{
                       display: 'inline-block',
@@ -174,10 +238,19 @@ function Bodegas() {
                       borderRadius: '20px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      backgroundColor: '#e9ecef',
-                      color: '#495057',
+                      backgroundColor: 
+                        vehiculo.estado === 'disponible' ? '#d4edda' :
+                        vehiculo.estado === 'en_ruta' ? '#fff3cd' :
+                        vehiculo.estado === 'mantenimiento' ? '#f8d7da' : '#e9ecef',
+                      color:
+                        vehiculo.estado === 'disponible' ? '#155724' :
+                        vehiculo.estado === 'en_ruta' ? '#856404' :
+                        vehiculo.estado === 'mantenimiento' ? '#721c24' : '#495057',
                     }}>
-                      {vehiculo.estado}
+                      {vehiculo.estado === 'disponible' ? '‚úÖ Disponible' :
+                       vehiculo.estado === 'en_ruta' ? 'Ì∫õ En Ruta' :
+                       vehiculo.estado === 'mantenimiento' ? 'Ì¥ß Mantenimiento' :
+                       vehiculo.estado}
                     </div>
                   </div>
                 </div>
