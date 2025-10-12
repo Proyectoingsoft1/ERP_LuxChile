@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from "../Navbar/Navbar";
 import StatCard from "../Dashboard/StatCard";
 import RutasTable from "../Dashboard/RutasTable";
+import FiltrosRutas from "../Dashboard/FiltrosRutas"; // SCRUM-127
 import { getUsuario, isAuthenticated, dashboardService } from '../../services';
 import TokenDebug from "../Login/TokenDebug";
 
@@ -11,8 +12,16 @@ function Main() {
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [rutasActivas, setRutasActivas] = useState([]);
+  const [rutasFiltradas, setRutasFiltradas] = useState([]); // SCRUM-127
   const [estadisticas, setEstadisticas] = useState(null);
   const [error, setError] = useState('');
+  
+  // SCRUM-127: Estado de filtros
+  const [filtros, setFiltros] = useState({
+    estado: 'todas',
+    prioridad: 'todas',
+    busqueda: '',
+  });
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -28,6 +37,11 @@ function Main() {
       navigate('/', { replace: true });
     }
   }, [navigate]);
+
+  // SCRUM-127: Aplicar filtros cuando cambien
+  useEffect(() => {
+    aplicarFiltros();
+  }, [filtros, rutasActivas]);
 
   const cargarDatosDashboard = async () => {
     try {
@@ -48,9 +62,48 @@ function Main() {
     }
   };
 
+  // SCRUM-127: Función para aplicar filtros
+  const aplicarFiltros = () => {
+    let rutasFiltradas = [...rutasActivas];
+
+    // Filtrar por estado
+    if (filtros.estado !== 'todas') {
+      rutasFiltradas = rutasFiltradas.filter(
+        ruta => ruta.estadoRuta === filtros.estado
+      );
+    }
+
+    // Filtrar por prioridad
+    if (filtros.prioridad !== 'todas') {
+      rutasFiltradas = rutasFiltradas.filter(
+        ruta => ruta.carga.prioridad === filtros.prioridad
+      );
+    }
+
+    // Filtrar por búsqueda (vehículo o conductor)
+    if (filtros.busqueda.trim()) {
+      const busquedaLower = filtros.busqueda.toLowerCase();
+      rutasFiltradas = rutasFiltradas.filter(ruta =>
+        ruta.vehiculo.patente.toLowerCase().includes(busquedaLower) ||
+        ruta.vehiculo.marca.toLowerCase().includes(busquedaLower) ||
+        ruta.vehiculo.modelo.toLowerCase().includes(busquedaLower) ||
+        ruta.conductor.nombre.toLowerCase().includes(busquedaLower)
+      );
+    }
+
+    setRutasFiltradas(rutasFiltradas);
+  };
+
+  // SCRUM-127: Handler para cambio de filtros
+  const handleCambioFiltro = (campo, valor) => {
+    setFiltros(prev => ({
+      ...prev,
+      [campo]: valor,
+    }));
+  };
+
   const handleVerDetalle = (ruta) => {
     console.log('Ver detalle de ruta:', ruta);
-    // TODO: Navegar a vista de detalle o abrir modal
     alert(`Detalle de ruta #${ruta.id}\nVehículo: ${ruta.vehiculo.patente}\nDestino: ${ruta.destino}`);
   };
 
@@ -109,7 +162,7 @@ function Main() {
           </div>
         )}
 
-        {/* SCRUM-126: Grid de estadísticas con StatCard */}
+        {/* Grid de estadísticas */}
         {estadisticas && (
           <div style={{
             display: 'grid',
@@ -151,7 +204,7 @@ function Main() {
           </div>
         )}
 
-        {/* SCRUM-126: Widget de Rutas Activas con RutasTable */}
+        {/* Widget de Rutas Activas */}
         <div style={{
           backgroundColor: 'white',
           padding: '28px',
@@ -184,12 +237,20 @@ function Main() {
               fontSize: '15px',
               fontWeight: '700',
             }}>
-              {rutasActivas.length} {rutasActivas.length === 1 ? 'ruta' : 'rutas'}
+              {rutasActivas.length} total
             </span>
           </div>
 
+          {/* SCRUM-127: Filtros */}
+          <FiltrosRutas
+            filtros={filtros}
+            onCambioFiltro={handleCambioFiltro}
+            totalRutas={rutasFiltradas.length}
+          />
+
+          {/* Tabla con rutas filtradas */}
           <RutasTable 
-            rutas={rutasActivas} 
+            rutas={rutasFiltradas}
             onVerDetalle={handleVerDetalle}
           />
         </div>
