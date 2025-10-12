@@ -1,3 +1,5 @@
+import BadgeEstado from './BadgeEstado';
+
 function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
   return (
     <div style={{
@@ -40,7 +42,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             onFocus={(e) => e.target.style.borderColor = '#667eea'}
             onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
           >
-            <option value="todos">Todos los estados</option>
+            <option value="todos">Ì≥ã Todos los estados</option>
             <option value="disponible">‚úÖ Disponible</option>
             <option value="en_ruta">Ì∫õ En Ruta</option>
             <option value="mantenimiento">Ì¥ß Mantenimiento</option>
@@ -56,7 +58,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             fontWeight: '600',
             color: '#555',
           }}>
-            Buscar Veh√≠culo
+            Ì¥ç Buscar Veh√≠culo
           </label>
           <input
             type="text"
@@ -86,7 +88,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             fontWeight: '600',
             color: '#555',
           }}>
-            Ordenar por
+            ‚¨áÔ∏è Ordenar por
           </label>
           <select
             value={filtros.ordenar}
@@ -104,9 +106,9 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             onFocus={(e) => e.target.style.borderColor = '#667eea'}
             onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
           >
-            <option value="reciente">M√°s recientes</option>
-            <option value="patente">Patente (A-Z)</option>
-            <option value="capacidad">Mayor capacidad</option>
+            <option value="reciente">Ìµê M√°s recientes</option>
+            <option value="patente">Ì¥§ Patente (A-Z)</option>
+            <option value="capacidad">‚öñÔ∏è Mayor capacidad</option>
           </select>
         </div>
 
@@ -138,7 +140,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
         </div>
       </div>
 
-      {/* Contador de resultados */}
+      {/* Contador de resultados con badges de estado */}
       <div style={{
         marginTop: '16px',
         padding: '12px 16px',
@@ -148,10 +150,22 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
         justifyContent: 'space-between',
         alignItems: 'center',
         fontSize: '14px',
+        flexWrap: 'wrap',
+        gap: '12px',
       }}>
-        <span style={{ color: '#666' }}>
-          <strong style={{ color: '#2c3e50' }}>{totalVehiculos}</strong> {totalVehiculos === 1 ? 'veh√≠culo encontrado' : 'veh√≠culos encontrados'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <span style={{ color: '#666' }}>
+            <strong style={{ color: '#2c3e50' }}>{totalVehiculos}</strong> {totalVehiculos === 1 ? 'veh√≠culo encontrado' : 'veh√≠culos encontrados'}
+          </span>
+
+          {/* SCRUM-90: Mostrar badge del filtro activo */}
+          {filtros.estado !== 'todos' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#999' }}>Filtrando por:</span>
+              <BadgeEstado estado={filtros.estado} size="small" />
+            </div>
+          )}
+        </div>
 
         {(filtros.estado !== 'todos' || filtros.busqueda || filtros.ordenar !== 'reciente') && (
           <span style={{
