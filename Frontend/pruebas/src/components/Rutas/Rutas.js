@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
+import FormularioRuta from './FormularioRuta';
 import { isAuthenticated, rutasService } from '../../services';
 
 function Rutas() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
-  
+
   // Estados para rutas del backend
   const [rutas, setRutas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
-  
+
   // Estados para Google Maps
   const [map, setMap] = useState(null);
   const [ubicacionActual, setUbicacionActual] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
+
+  // SCRUM-93: Estado para el modal
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   useEffect(() => {
     // Verificar autenticaciÃ³n
@@ -26,8 +30,15 @@ function Rutas() {
     }
 
     cargarRutas();
-    inicializarMapa();
   }, [navigate]);
+
+  // Inicializar mapa DESPUÃ‰S de que termine el loading
+  useEffect(() => {
+    if (!loading && mapRef.current && !map) {
+      console.log('ğŸ¯ Loading terminÃ³, inicializando mapa...');
+      inicializarMapa();
+    }
+  }, [loading]);
 
   // SCRUM-91: Cargar rutas desde el backend
   const cargarRutas = async () => {
@@ -47,9 +58,31 @@ function Rutas() {
     }
   };
 
-  // SCRUM-95: Inicializar Google Maps
+  // SCRUM-95: Inicializar Google Maps con debug
   const inicializarMapa = () => {
-    if (!window.google || map) return;
+    console.log('ğŸ—ºï¸ Intentando inicializar mapa...', {
+      googleExists: !!window.google,
+      mapExists: !!map,
+      refExists: !!mapRef.current
+    });
+
+    if (!window.google) {
+      console.log('â³ Google Maps aÃºn no estÃ¡ cargado, reintentando en 100ms...');
+      setTimeout(inicializarMapa, 100);
+      return;
+    }
+
+    if (map) {
+      console.log('âœ… Mapa ya inicializado');
+      return;
+    }
+
+    if (!mapRef.current) {
+      console.log('âŒ mapRef no existe aÃºn');
+      return;
+    }
+
+    console.log('ğŸ“ Obteniendo ubicaciÃ³n...');
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -57,6 +90,7 @@ function Rutas() {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        console.log('ğŸ“ UbicaciÃ³n obtenida:', actual);
         setUbicacionActual(actual);
 
         const newMap = new window.google.maps.Map(mapRef.current, {
@@ -84,26 +118,42 @@ function Rutas() {
             url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           },
         });
+
+        console.log('âœ… Mapa inicializado correctamente');
       },
       (error) => {
-        console.error('Error obteniendo ubicaciÃ³n:', error);
+        console.error('âŒ Error obteniendo ubicaciÃ³n:', error);
+        console.log('ğŸŒ Usando Santiago como ubicaciÃ³n por defecto');
+
         // Si falla, usar Santiago como centro por defecto
         const santiago = { lat: -33.4489, lng: -70.6693 };
         const newMap = new window.google.maps.Map(mapRef.current, {
           center: santiago,
           zoom: 13,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
         });
+
         const renderer = new window.google.maps.DirectionsRenderer();
         renderer.setMap(newMap);
         setMap(newMap);
         setDirectionsRenderer(renderer);
+
+        console.log('âœ… Mapa inicializado con ubicaciÃ³n por defecto');
       }
     );
   };
 
   // SCRUM-92 + 95: Mostrar ruta en el mapa al hacer click
   const handleVerRutaEnMapa = async (ruta) => {
-    if (!map || !directionsRenderer) return;
+    console.log('ğŸ—ºï¸ Intentando mostrar ruta:', ruta.origen, 'â†’', ruta.destino);
+
+    if (!map || !directionsRenderer) {
+      console.log('âŒ Mapa no inicializado');
+      alert('El mapa aÃºn no estÃ¡ cargado. Espera un momento e intenta de nuevo.');
+      return;
+    }
 
     setRutaSeleccionada(ruta);
 
@@ -119,12 +169,13 @@ function Rutas() {
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           directionsRenderer.setDirections(result);
-          
+          console.log('âœ… Ruta dibujada en el mapa');
+
           // Hacer scroll al mapa
           mapRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-          console.error('Error al calcular ruta:', status);
-          alert('No se pudo calcular la ruta en el mapa');
+          console.error('âŒ Error al calcular ruta:', status);
+          alert('No se pudo calcular la ruta en el mapa. Verifica las direcciones.');
         }
       }
     );
@@ -133,9 +184,15 @@ function Rutas() {
   const limpiarMapa = () => {
     if (directionsRenderer) {
       directionsRenderer.setDirections({ routes: [] });
+      console.log('ğŸ—‘ï¸ Mapa limpiado');
     }
     setRutaSeleccionada(null);
   };
+
+  // SCRUM-93: Funciones del modal
+  const handleAbrirModal = () => setModalAbierto(true);
+  const handleCerrarModal = () => setModalAbierto(false);
+  const handleRutaCreada = () => cargarRutas();
 
   if (loading) {
     return (
@@ -162,13 +219,40 @@ function Rutas() {
 
       <div style={{ padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={{ marginBottom: '30px' }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', color: '#2c3e50' }}>
-            í·ºï¸ GestiÃ³n de Rutas
-          </h1>
-          <p style={{ color: '#7f8c8d', fontSize: '16px', margin: 0 }}>
-            Administra las rutas de transporte y entregas
-          </p>
+        <div style={{
+          marginBottom: '30px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <div>
+            <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', color: '#2c3e50' }}>
+              ğŸ—ºï¸ GestiÃ³n de Rutas
+            </h1>
+            <p style={{ color: '#7f8c8d', fontSize: '16px', margin: 0 }}>
+              Administra las rutas de transporte y entregas
+            </p>
+          </div>
+
+          <button
+            onClick={handleAbrirModal}
+            style={{
+              padding: '14px 28px',
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>+</span>
+            <span>Crear Nueva Ruta</span>
+          </button>
         </div>
 
         {/* Error */}
@@ -203,7 +287,7 @@ function Rutas() {
             marginBottom: '16px',
           }}>
             <h2 style={{ margin: 0, fontSize: '20px', color: '#2c3e50' }}>
-              í·ºï¸ Mapa de Rutas
+              ğŸ—ºï¸ Mapa de Rutas
             </h2>
             {rutaSeleccionada && (
               <button
@@ -219,7 +303,7 @@ function Rutas() {
                   cursor: 'pointer',
                 }}
               >
-                í·‘ï¸ Limpiar Mapa
+                ğŸ—‘ï¸ Limpiar Mapa
               </button>
             )}
           </div>
@@ -233,7 +317,7 @@ function Rutas() {
               fontSize: '14px',
               color: '#1565c0',
             }}>
-              í³ Mostrando ruta: <strong>{rutaSeleccionada.origen}</strong> â†’ <strong>{rutaSeleccionada.destino}</strong>
+              ğŸ“ Mostrando ruta: <strong>{rutaSeleccionada.origen}</strong> â†’ <strong>{rutaSeleccionada.destino}</strong>
             </div>
           )}
 
@@ -244,6 +328,7 @@ function Rutas() {
               height: '450px',
               borderRadius: '12px',
               border: '2px solid #e9ecef',
+              backgroundColor: '#e5e3df',
             }}
           />
         </div>
@@ -284,7 +369,7 @@ function Rutas() {
               padding: '60px 20px',
               color: '#999',
             }}>
-              <div style={{ fontSize: '64px', marginBottom: '20px' }}>í·ºï¸</div>
+              <div style={{ fontSize: '64px', marginBottom: '20px' }}>ğŸ—ºï¸</div>
               <h3 style={{ color: '#666', fontWeight: '400' }}>No hay rutas registradas</h3>
               <p style={{ fontSize: '14px' }}>Crea la primera ruta para comenzar</p>
             </div>
@@ -327,17 +412,17 @@ function Rutas() {
                         Ruta
                       </div>
                       <div style={{ fontSize: '16px', fontWeight: '600', color: '#2c3e50' }}>
-                        í³ {ruta.origen}
+                        ğŸ“ {ruta.origen}
                       </div>
                       <div style={{ fontSize: '14px', color: '#7f8c8d', margin: '4px 0' }}>
                         â†“
                       </div>
                       <div style={{ fontSize: '16px', fontWeight: '600', color: '#2c3e50' }}>
-                        í¾¯ {ruta.destino}
+                        ğŸ¯ {ruta.destino}
                       </div>
                       {ruta.distanciaKm && (
                         <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                          í³ {ruta.distanciaKm} km
+                          ğŸ“ {ruta.distanciaKm} km
                         </div>
                       )}
                     </div>
@@ -348,7 +433,7 @@ function Rutas() {
                         VehÃ­culo
                       </div>
                       <div style={{ fontSize: '16px', fontWeight: '700', color: '#667eea' }}>
-                        íº› {ruta.vehiculo.patente}
+                        ğŸš› {ruta.vehiculo.patente}
                       </div>
                       <div style={{ fontSize: '13px', color: '#7f8c8d' }}>
                         {ruta.vehiculo.marca} {ruta.vehiculo.modelo}
@@ -361,7 +446,7 @@ function Rutas() {
                         Carga
                       </div>
                       <div style={{ fontSize: '14px', fontWeight: '600', color: '#2c3e50' }}>
-                        í³¦ {ruta.carga.descripcion}
+                        ğŸ“¦ {ruta.carga.descripcion}
                       </div>
                       <div style={{ fontSize: '12px', color: '#7f8c8d' }}>
                         âš–ï¸ {ruta.carga.peso} kg
@@ -376,7 +461,7 @@ function Rutas() {
                         borderRadius: '20px',
                         fontSize: '13px',
                         fontWeight: '600',
-                        backgroundColor: 
+                        backgroundColor:
                           ruta.estadoRuta === 'planificada' ? '#e3f2fd' :
                           ruta.estadoRuta === 'en_curso' ? '#fff3cd' :
                           ruta.estadoRuta === 'completada' ? '#d4edda' :
@@ -387,8 +472,8 @@ function Rutas() {
                           ruta.estadoRuta === 'completada' ? '#155724' :
                           ruta.estadoRuta === 'cancelada' ? '#721c24' : '#495057',
                       }}>
-                        {ruta.estadoRuta === 'planificada' ? 'í³‹ Planificada' :
-                         ruta.estadoRuta === 'en_curso' ? 'íº› En Curso' :
+                        {ruta.estadoRuta === 'planificada' ? 'ğŸ“‹ Planificada' :
+                         ruta.estadoRuta === 'en_curso' ? 'ğŸš› En Curso' :
                          ruta.estadoRuta === 'completada' ? 'âœ… Completada' :
                          ruta.estadoRuta === 'cancelada' ? 'âŒ Cancelada' :
                          ruta.estadoRuta}
@@ -405,7 +490,7 @@ function Rutas() {
                       fontSize: '13px',
                       color: '#7f8c8d',
                     }}>
-                      í±¤ Conductor: <strong style={{ color: '#2c3e50' }}>{ruta.conductor.nombre}</strong>
+                      ğŸ‘¤ Conductor: <strong style={{ color: '#2c3e50' }}>{ruta.conductor.nombre}</strong>
                     </div>
                   )}
                 </div>
@@ -414,6 +499,13 @@ function Rutas() {
           )}
         </div>
       </div>
+
+      {/* SCRUM-93: Modal del formulario */}
+      <FormularioRuta
+        isOpen={modalAbierto}
+        onClose={handleCerrarModal}
+        onRutaCreada={handleRutaCreada}
+      />
     </div>
   );
 }

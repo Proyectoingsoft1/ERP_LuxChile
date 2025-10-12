@@ -8,7 +8,7 @@ import vehiculosRoutes from './routes/vehiculos.js';
 import cargasRoutes from './routes/cargas.js';
 import rutasRoutes from './routes/rutas.js';
 import dashboardRoutes from './routes/dashboard.js';
-
+import usuariosRoutes from './routes/usuarios.js';
 // Configurar variables de entorno
 dotenv.config();
 
@@ -54,7 +54,7 @@ app.use('/api/vehiculos', vehiculosRoutes);
 app.use('/api/cargas', cargasRoutes);
 app.use('/api/rutas', rutasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
+app.use('/api/usuarios', usuariosRoutes);
 // Ruta de test (sin autenticación)
 app.get('/api/test', (req, res) => {
   res.json({
