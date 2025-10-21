@@ -12,6 +12,9 @@
     "prisma:studio": "prisma studio",
     "seed": "node prisma/seed.js"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": ["express", "prisma", "erp", "logistica"],
   "author": "Equipo ERP LuxChile",
   "license": "MIT",
