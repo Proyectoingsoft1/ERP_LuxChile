@@ -44,6 +44,18 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al crear usuario';
     }
   },
+
+  /**
+   * Actualizar usuario existente
+   */
+  actualizar: async (id, datosUsuario) => {
+    try {
+      const response = await apiClient.put(`/usuarios/${id}`, datosUsuario);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al actualizar usuario';
+    }
+  },
 };
 
 export default usuariosService;
