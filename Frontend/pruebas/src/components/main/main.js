@@ -138,7 +138,7 @@ function Main() {
         {/* Header */}
         <div style={{ marginBottom: '30px' }}>
           <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', color: '#2c3e50' }}>
-            Ì±ã Hola, {usuario.nombre}
+            Hola, {usuario.nombre}
           </h1>
           <p style={{ color: '#7f8c8d', fontSize: '16px', margin: 0 }}>
             Bienvenido al dashboard de {usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
@@ -171,7 +171,7 @@ function Main() {
             marginBottom: '30px',
           }}>
             <StatCard
-              icon="Ì∫ö"
+              icon=""
               title="Total Veh√≠culos"
               value={estadisticas.totales.vehiculos}
               subtitle={`${estadisticas.vehiculos.disponibles} disponibles ‚Ä¢ ${estadisticas.vehiculos.enRuta} en ruta`}
@@ -179,7 +179,7 @@ function Main() {
             />
             
             <StatCard
-              icon="Ì≥¶"
+              icon=""
               title="Total Cargas"
               value={estadisticas.totales.cargas}
               subtitle={`${estadisticas.cargas.pendientes} pendientes ‚Ä¢ ${estadisticas.cargas.enTransito} en tr√°nsito`}
@@ -187,7 +187,7 @@ function Main() {
             />
             
             <StatCard
-              icon="Ì∑∫Ô∏è"
+              icon=""
               title="Rutas Activas"
               value={estadisticas.rutas.activas}
               subtitle={`${estadisticas.rutas.completadas} completadas`}
@@ -195,7 +195,7 @@ function Main() {
             />
             
             <StatCard
-              icon="Ì±•"
+              icon=""
               title="Total Usuarios"
               value={estadisticas.totales.usuarios}
               subtitle="Personal registrado en el sistema"
@@ -227,7 +227,7 @@ function Main() {
               alignItems: 'center',
               gap: '12px',
             }}>
-              Ì∑∫Ô∏è Rutas Activas
+              Rutas Activas
             </h2>
             <span style={{
               backgroundColor: '#667eea',

@@ -42,10 +42,10 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             onFocus={(e) => e.target.style.borderColor = '#667eea'}
             onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
           >
-            <option value="todos">Ì≥ã Todos los estados</option>
-            <option value="disponible">‚úÖ Disponible</option>
-            <option value="en_ruta">Ì∫õ En Ruta</option>
-            <option value="mantenimiento">Ì¥ß Mantenimiento</option>
+            <option value="todos">Todos los estados</option>
+            <option value="disponible">Disponible</option>
+            <option value="en_ruta">En Ruta</option>
+            <option value="mantenimiento">Mantenimiento</option>
           </select>
         </div>
 
@@ -58,7 +58,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             fontWeight: '600',
             color: '#555',
           }}>
-            Ì¥ç Buscar Veh√≠culo
+            Buscar Veh√≠culo
           </label>
           <input
             type="text"
@@ -88,7 +88,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             fontWeight: '600',
             color: '#555',
           }}>
-            ‚¨áÔ∏è Ordenar por
+            Ordenar por
           </label>
           <select
             value={filtros.ordenar}
@@ -106,9 +106,9 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             onFocus={(e) => e.target.style.borderColor = '#667eea'}
             onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
           >
-            <option value="reciente">Ìµê M√°s recientes</option>
-            <option value="patente">Ì¥§ Patente (A-Z)</option>
-            <option value="capacidad">‚öñÔ∏è Mayor capacidad</option>
+            <option value="reciente">M√°s recientes</option>
+            <option value="patente">Patente (A-Z)</option>
+            <option value="capacidad">Mayor capacidad</option>
           </select>
         </div>
 
@@ -135,7 +135,7 @@ function FiltrosVehiculos({ filtros, onCambioFiltro, totalVehiculos }) {
             onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'}
             onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'}
           >
-            Ì∑ëÔ∏è Limpiar
+            Limpiar
           </button>
         </div>
       </div>
