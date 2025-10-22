@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
 import TrabajadorCard from './TrabajadorCard';
+import FiltrosTrabajadores from './FiltrosTrabajadores';
 import usuariosService from '../../services/usuariosService';
 import { getUsuario } from '../../config/api';
 
@@ -9,16 +10,20 @@ function Trabajadores() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const usuarioActual = getUsuario();
+  const [filtros, setFiltros] = useState({ rol: null, activo: null });
 
   useEffect(() => {
     cargarTrabajadores();
   }, []);
 
-  const cargarTrabajadores = async () => {
+  const cargarTrabajadores = async (filtrosAplicados = filtros) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await usuariosService.obtenerTodos();
+      const data = await usuariosService.obtenerTodos(
+        filtrosAplicados.rol,
+        filtrosAplicados.activo
+      );
       setTrabajadores(data);
     } catch (err) {
       setError(err.message || 'Error al cargar trabajadores');
@@ -26,6 +31,12 @@ function Trabajadores() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFiltrar = (nuevosFiltros) => {
+    const filtrosActualizados = { ...filtros, ...nuevosFiltros };
+    setFiltros(filtrosActualizados);
+    cargarTrabajadores(filtrosActualizados);
   };
 
   const handleVerDetalle = (trabajador) => {
@@ -42,7 +53,7 @@ function Trabajadores() {
     const confirmacion = window.confirm(
       `Â¿EstÃ¡s seguro de que deseas eliminar a ${trabajador.nombre}?\n\nEsta acciÃ³n no se puede deshacer.`
     );
-    
+
     if (confirmacion) {
       alert(`Eliminar: ${trabajador.nombre}`);
       // TODO: SCRUM-153 - Implementar eliminaciÃ³n
@@ -94,7 +105,7 @@ function Trabajadores() {
               cursor: 'pointer',
             }}
           >
-            ğŸ”„ Reintentar
+            í´„ Reintentar
           </button>
         </div>
       </div>
@@ -123,7 +134,7 @@ function Trabajadores() {
               color: '#2c3e50',
               marginBottom: '8px',
             }}>
-              ğŸ‘¥ GestiÃ³n de Trabajadores
+              í±¥ GestiÃ³n de Trabajadores
             </h1>
             <p style={{
               fontSize: '16px',
@@ -156,6 +167,12 @@ function Trabajadores() {
           </button>
         </div>
 
+        {/* Filtros */}
+        <FiltrosTrabajadores 
+          onFiltrar={handleFiltrar}
+          totalTrabajadores={trabajadores.length}
+        />
+
         {/* Grid de trabajadores */}
         {trabajadores.length === 0 ? (
           <div style={{
@@ -164,7 +181,7 @@ function Trabajadores() {
             backgroundColor: '#f8f9fa',
             borderRadius: '16px',
           }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>ğŸ‘¥</div>
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>í±¥</div>
             <div style={{ fontSize: '24px', color: '#7f8c8d', marginBottom: '8px' }}>
               No hay trabajadores registrados
             </div>
