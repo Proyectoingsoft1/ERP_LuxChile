@@ -3,6 +3,7 @@ import Navbar from "../Navbar/Navbar";
 import TrabajadorCard from './TrabajadorCard';
 import FiltrosTrabajadores from './FiltrosTrabajadores';
 import ModalDetalleTrabajador from './ModalDetalleTrabajador';
+import FormularioTrabajador from './FormularioTrabajador';
 import usuariosService from '../../services/usuariosService';
 import { getUsuario } from '../../config/api';
 
@@ -13,6 +14,7 @@ function Trabajadores() {
   const usuarioActual = getUsuario();
   const [filtros, setFiltros] = useState({ rol: null, activo: null });
   const [trabajadorSeleccionado, setTrabajadorSeleccionado] = useState(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   useEffect(() => {
     cargarTrabajadores();
@@ -47,6 +49,17 @@ function Trabajadores() {
 
   const cerrarModal = () => {
     setTrabajadorSeleccionado(null);
+  };
+
+  const handleGuardarNuevo = async (datos) => {
+    try {
+      await usuariosService.crear(datos);
+      setMostrarFormulario(false);
+      cargarTrabajadores();
+      alert('✅ Trabajador creado exitosamente');
+    } catch (error) {
+      alert(`❌ Error: ${error}`);
+    }
   };
 
   const handleEditar = (trabajador) => {
@@ -150,7 +163,7 @@ function Trabajadores() {
           </div>
 
           <button
-            onClick={() => alert('TODO: SCRUM-151 - Implementar formulario de nuevo trabajador')}
+            onClick={() => setMostrarFormulario(true)}
             style={{
               padding: '12px 24px',
               backgroundColor: '#27ae60',
@@ -219,6 +232,14 @@ function Trabajadores() {
         <ModalDetalleTrabajador
           trabajador={trabajadorSeleccionado}
           onCerrar={cerrarModal}
+        />
+      )}
+
+      {/* Modal de formulario */}
+      {mostrarFormulario && (
+        <FormularioTrabajador
+          onCerrar={() => setMostrarFormulario(false)}
+          onGuardar={handleGuardarNuevo}
         />
       )}
     </div>
