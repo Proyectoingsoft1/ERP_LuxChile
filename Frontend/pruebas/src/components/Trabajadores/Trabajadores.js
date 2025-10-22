@@ -86,13 +86,32 @@ function Trabajadores() {
   };
 
   const handleEliminar = async (trabajador) => {
+    // Verificar permisos en el frontend (doble validación)
+    if (usuarioActual?.rol !== 'rrhh') {
+      alert('❌ Solo usuarios de RRHH pueden eliminar trabajadores');
+      return;
+    }
+
+    if (trabajador.rol === 'rrhh') {
+      alert('❌ No puedes eliminar a otros usuarios de RRHH');
+      return;
+    }
+
     const confirmacion = window.confirm(
-      `¿Estás seguro de que deseas eliminar a ${trabajador.nombre}?\n\nEsta acción no se puede deshacer.`
+      `¿Estás seguro de que deseas eliminar a ${trabajador.nombre}?\n\n` +
+      `Email: ${trabajador.email}\n` +
+      `Rol: ${trabajador.rol}\n\n` +
+      `Esta acción NO se puede deshacer.`
     );
 
     if (confirmacion) {
-      alert(`Eliminar: ${trabajador.nombre}`);
-      // TODO: SCRUM-153 - Implementar eliminación
+      try {
+        await usuariosService.eliminar(trabajador.id);
+        cargarTrabajadores();
+        alert(`✅ ${trabajador.nombre} ha sido eliminado exitosamente`);
+      } catch (error) {
+        alert(`❌ Error al eliminar: ${error}`);
+      }
     }
   };
 

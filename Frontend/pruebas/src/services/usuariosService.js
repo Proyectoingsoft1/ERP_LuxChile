@@ -56,6 +56,18 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al actualizar usuario';
     }
   },
+
+  /**
+   * Eliminar usuario
+   */
+  eliminar: async (id) => {
+    try {
+      const response = await apiClient.delete(`/usuarios/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al eliminar usuario';
+    }
+  },
 };
 
 export default usuariosService;
