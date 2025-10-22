@@ -32,6 +32,18 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al obtener conductores';
     }
   },
+
+  /**
+   * Crear nuevo usuario
+   */
+  crear: async (datosUsuario) => {
+    try {
+      const response = await apiClient.post('/usuarios', datosUsuario);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al crear usuario';
+    }
+  },
 };
 
 export default usuariosService;
