@@ -15,6 +15,7 @@ function Trabajadores() {
   const [filtros, setFiltros] = useState({ rol: null, activo: null });
   const [trabajadorSeleccionado, setTrabajadorSeleccionado] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [trabajadorEditar, setTrabajadorEditar] = useState(null);
 
   useEffect(() => {
     cargarTrabajadores();
@@ -62,9 +63,26 @@ function Trabajadores() {
     }
   };
 
+  const handleGuardarEdicion = async (datos) => {
+    try {
+      await usuariosService.actualizar(trabajadorEditar.id, datos);
+      setMostrarFormulario(false);
+      setTrabajadorEditar(null);
+      cargarTrabajadores();
+      alert('✅ Trabajador actualizado exitosamente');
+    } catch (error) {
+      alert(`❌ Error: ${error}`);
+    }
+  };
+
+  const cerrarFormulario = () => {
+    setMostrarFormulario(false);
+    setTrabajadorEditar(null);
+  };
+
   const handleEditar = (trabajador) => {
-    alert(`Editar: ${trabajador.nombre}`);
-    // TODO: SCRUM-152 - Implementar formulario de edición
+    setTrabajadorEditar(trabajador);
+    setMostrarFormulario(true);
   };
 
   const handleEliminar = async (trabajador) => {
@@ -238,8 +256,9 @@ function Trabajadores() {
       {/* Modal de formulario */}
       {mostrarFormulario && (
         <FormularioTrabajador
-          onCerrar={() => setMostrarFormulario(false)}
-          onGuardar={handleGuardarNuevo}
+          trabajador={trabajadorEditar}
+          onCerrar={cerrarFormulario}
+          onGuardar={trabajadorEditar ? handleGuardarEdicion : handleGuardarNuevo}
         />
       )}
     </div>
