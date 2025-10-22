@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
 import TrabajadorCard from './TrabajadorCard';
 import FiltrosTrabajadores from './FiltrosTrabajadores';
+import ModalDetalleTrabajador from './ModalDetalleTrabajador';
 import usuariosService from '../../services/usuariosService';
 import { getUsuario } from '../../config/api';
 
@@ -11,6 +12,7 @@ function Trabajadores() {
   const [error, setError] = useState(null);
   const usuarioActual = getUsuario();
   const [filtros, setFiltros] = useState({ rol: null, activo: null });
+  const [trabajadorSeleccionado, setTrabajadorSeleccionado] = useState(null);
 
   useEffect(() => {
     cargarTrabajadores();
@@ -40,8 +42,11 @@ function Trabajadores() {
   };
 
   const handleVerDetalle = (trabajador) => {
-    alert(`Ver detalle de: ${trabajador.nombre}\nEmail: ${trabajador.email}\nRol: ${trabajador.rol}`);
-    // TODO: SCRUM-150 - Implementar modal de detalle
+    setTrabajadorSeleccionado(trabajador);
+  };
+
+  const cerrarModal = () => {
+    setTrabajadorSeleccionado(null);
   };
 
   const handleEditar = (trabajador) => {
@@ -105,7 +110,7 @@ function Trabajadores() {
               cursor: 'pointer',
             }}
           >
-            í´„ Reintentar
+            ğŸ”„ Reintentar
           </button>
         </div>
       </div>
@@ -134,7 +139,7 @@ function Trabajadores() {
               color: '#2c3e50',
               marginBottom: '8px',
             }}>
-              í±¥ GestiÃ³n de Trabajadores
+              ğŸ‘¥ GestiÃ³n de Trabajadores
             </h1>
             <p style={{
               fontSize: '16px',
@@ -181,7 +186,7 @@ function Trabajadores() {
             backgroundColor: '#f8f9fa',
             borderRadius: '16px',
           }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>í±¥</div>
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>ğŸ‘¥</div>
             <div style={{ fontSize: '24px', color: '#7f8c8d', marginBottom: '8px' }}>
               No hay trabajadores registrados
             </div>
@@ -208,6 +213,14 @@ function Trabajadores() {
           </div>
         )}
       </div>
+
+      {/* Modal de detalle */}
+      {trabajadorSeleccionado && (
+        <ModalDetalleTrabajador
+          trabajador={trabajadorSeleccionado}
+          onCerrar={cerrarModal}
+        />
+      )}
     </div>
   );
 }
