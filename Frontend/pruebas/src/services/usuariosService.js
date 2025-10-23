@@ -68,6 +68,18 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al eliminar usuario';
     }
   },
+
+  /**
+   * Obtener perfil del usuario actual
+   */
+  obtenerPerfil: async () => {
+    try {
+      const response = await apiClient.get('/usuarios/perfil');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al obtener perfil';
+    }
+  },
 };
 
 export default usuariosService;
