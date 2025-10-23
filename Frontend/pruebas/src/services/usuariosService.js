@@ -80,6 +80,18 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al obtener perfil';
     }
   },
+
+  /**
+   * Actualizar perfil del usuario actual
+   */
+  actualizarPerfil: async (datosPerfil) => {
+    try {
+      const response = await apiClient.put('/usuarios/perfil', datosPerfil);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al actualizar perfil';
+    }
+  },
 };
 
 export default usuariosService;
