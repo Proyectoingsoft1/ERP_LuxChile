@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
 import usuariosService from '../../services/usuariosService';
+import FormularioPerfil from './FormularioPerfil';
+import { setUsuario } from '../../config/api';
 
 function Cuenta() {
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   useEffect(() => {
     cargarPerfil();
@@ -22,6 +25,21 @@ function Cuenta() {
       console.error('Error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGuardarPerfil = async (datos) => {
+    try {
+      const perfilActualizado = await usuariosService.actualizarPerfil(datos);
+      setPerfil(perfilActualizado);
+      setMostrarFormulario(false);
+      
+      // Actualizar también el usuario en localStorage
+      setUsuario(perfilActualizado);
+      
+      alert('✅ Perfil actualizado exitosamente');
+    } catch (error) {
+      alert(`❌ Error: ${error}`);
     }
   };
 
@@ -330,7 +348,7 @@ function Cuenta() {
               borderTop: '2px solid #e9ecef',
             }}>
               <button
-                onClick={() => alert('TODO: SCRUM-155 - Implementar edición de perfil')}
+                onClick={() => setMostrarFormulario(true)}
                 style={{
                   flex: 1,
                   padding: '14px 24px',
@@ -380,6 +398,15 @@ function Cuenta() {
           </div>
         </div>
       </div>
+
+      {/* Modal de formulario */}
+      {mostrarFormulario && (
+        <FormularioPerfil
+          perfil={perfil}
+          onCerrar={() => setMostrarFormulario(false)}
+          onGuardar={handleGuardarPerfil}
+        />
+      )}
     </div>
   );
 }
