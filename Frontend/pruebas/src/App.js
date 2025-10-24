@@ -5,6 +5,7 @@ import Bodegas from './components/Bodegas/Bodegas';
 import Cuentas from './components/Cuenta/Cuenta';
 import Rutas from './components/Rutas/Rutas';
 import Trabajadores from './components/Trabajadores/Trabajadores';
+import Cargas from './components/Cargas/Cargas';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/Cuenta" element={<Cuentas />} />
         <Route path='/Rutas' element={<Rutas />} />
         <Route path='/Trabajadores' element={<Trabajadores />} />
+        <Route path="/Cargas" element={<Cargas />} />
       </Routes>
     </Router>
   );
