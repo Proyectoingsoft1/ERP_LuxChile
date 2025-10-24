@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
 import CargaCard from './CargaCard';
+import FormularioCarga from './FormularioCarga';
 import cargasService from '../../services/cargasService';
 
 function Cargas() {
   const [cargas, setCargas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   useEffect(() => {
     cargarCargas();
@@ -23,6 +25,17 @@ function Cargas() {
       console.error('Error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGuardarNueva = async (datos) => {
+    try {
+      await cargasService.crear(datos);
+      setMostrarFormulario(false);
+      cargarCargas(); // Recargar lista
+      alert('✅ Carga creada exitosamente con estado "pendiente"');
+    } catch (error) {
+      alert(`❌ Error: ${error}`);
     }
   };
 
@@ -111,7 +124,7 @@ function Cargas() {
           </div>
 
           <button
-            onClick={() => alert('TODO: SCRUM-159 - Implementar formulario de nueva carga')}
+            onClick={() => setMostrarFormulario(true)}
             style={{
               padding: '12px 24px',
               backgroundColor: '#27ae60',
@@ -164,6 +177,13 @@ function Cargas() {
           </div>
         )}
       </div>
+      {/* Modal de formulario */}
+      {mostrarFormulario && (
+        <FormularioCarga
+          onCerrar={() => setMostrarFormulario(false)}
+          onGuardar={handleGuardarNueva}
+        />
+      )}
     </div>
   );
 }
