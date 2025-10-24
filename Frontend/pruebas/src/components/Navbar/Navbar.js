@@ -20,12 +20,13 @@ function Navbar() {
     }
   };
 
-  // SCRUM-83: Links de navegaciÃ³n
+// SCRUM-83: Links de navegaciÃ³n
   const menuItems = [
-    { path: '/main', label: 'Dashboard', icon: 'í¿ ' },
-    { path: '/Rutas', label: 'Rutas', icon: 'í·ºï¸' },
-    { path: '/Bodegas', label: 'VehÃ­culos', icon: 'íºš' },
-    { path: '/Trabajadores', label: 'Trabajadores', icon: 'í±¥' },
+    { path: '/main', label: 'Dashboard', icon: 'ðŸ“Š' },
+    { path: '/Rutas', label: 'Rutas', icon: 'ðŸ—ºï¸' },
+    { path: '/Bodegas', label: 'VehÃ­culos', icon: 'ðŸšš' },
+    { path: '/Cargas', label: 'Cargas', icon: 'ðŸ“¦' },
+    { path: '/Trabajadores', label: 'Trabajadores', icon: 'ðŸ‘¥' },
     { path: '/Cuenta', label: 'Mi Cuenta', icon: 'âš™ï¸' },
   ];
 
@@ -51,7 +52,7 @@ function Navbar() {
           }}
           onClick={() => navigate('/main')}
         >
-          íºš ERP LuxChile
+          ï¿½ï¿½ï¿½ ERP LuxChile
         </h2>
         
         {/* Usuario y Logout */}
@@ -66,7 +67,7 @@ function Navbar() {
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               borderRadius: '20px',
             }}>
-              <span style={{ fontSize: '18px' }}>í±¤</span>
+              <span style={{ fontSize: '18px' }}>ï¿½ï¿½ï¿½</span>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <span style={{ fontWeight: '600', fontSize: '14px' }}>
                   {usuario.nombre}
@@ -94,7 +95,7 @@ function Navbar() {
             onMouseOver={(e) => e.target.style.backgroundColor = '#c0392b'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
           >
-            íºª Cerrar sesiÃ³n
+            ï¿½ï¿½ï¿½ Cerrar sesiÃ³n
           </button>
         </div>
       </div>
