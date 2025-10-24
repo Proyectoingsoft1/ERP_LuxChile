@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
 import usuariosService from '../../services/usuariosService';
 import FormularioPerfil from './FormularioPerfil';
+import FormularioContrasena from './FormularioContrasena';
 import { setUsuario } from '../../config/api';
 
 function Cuenta() {
@@ -9,6 +10,7 @@ function Cuenta() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarFormularioContrasena, setMostrarFormularioContrasena] = useState(false);
 
   useEffect(() => {
     cargarPerfil();
@@ -40,6 +42,17 @@ function Cuenta() {
       alert('✅ Perfil actualizado exitosamente');
     } catch (error) {
       alert(`❌ Error: ${error}`);
+    }
+  };
+
+  const handleCambiarContrasena = async (contrasenaActual, contrasenaNueva) => {
+    try {
+      await usuariosService.cambiarContrasena(contrasenaActual, contrasenaNueva);
+      setMostrarFormularioContrasena(false);
+      alert('✅ Contraseña actualizada exitosamente. Usa tu nueva contraseña en el próximo inicio de sesión.');
+    } catch (error) {
+      alert(`❌ Error: ${error}`);
+      throw error; // Para que el formulario no se cierre si hay error
     }
   };
 
@@ -372,7 +385,7 @@ function Cuenta() {
               </button>
 
               <button
-                onClick={() => alert('TODO: SCRUM-156 - Implementar cambio de contraseña')}
+                onClick={() => setMostrarFormularioContrasena(true)}
                 style={{
                   flex: 1,
                   padding: '14px 24px',
@@ -405,6 +418,13 @@ function Cuenta() {
           perfil={perfil}
           onCerrar={() => setMostrarFormulario(false)}
           onGuardar={handleGuardarPerfil}
+        />
+      )}
+      {/* Modal de cambiar contraseña */}
+      {mostrarFormularioContrasena && (
+        <FormularioContrasena
+          onCerrar={() => setMostrarFormularioContrasena(false)}
+          onGuardar={handleCambiarContrasena}
         />
       )}
     </div>

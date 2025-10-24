@@ -92,6 +92,21 @@ const usuariosService = {
       throw error.response?.data?.error || 'Error al actualizar perfil';
     }
   },
+
+  /**
+   * Cambiar contraseña del usuario actual
+   */
+  cambiarContrasena: async (contrasenaActual, contrasenaNueva) => {
+    try {
+      const response = await apiClient.put('/usuarios/perfil/contrasena', {
+        contrasenaActual,
+        contrasenaNueva,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data?.error || 'Error al cambiar contraseña';
+    }
+  },
 };
 
 export default usuariosService;
