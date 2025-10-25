@@ -41,9 +41,9 @@ const rutasService = {
   /**
    * Actualizar ruta
    */
-  actualizar: async (id, rutaData) => {
+  actualizar: async (id, datos) => {
     try {
-      const response = await apiClient.put(`/rutas/${id}`, rutaData);
+      const response = await apiClient.put(`/rutas/${id}`, datos);
       return response.data;
     } catch (error) {
       throw error.response?.data?.error || 'Error al actualizar ruta';
