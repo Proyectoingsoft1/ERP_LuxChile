@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import FormularioRuta from './FormularioRuta';
+import SelectorEstadoRuta from './SelectorEstadoRuta';
 import { isAuthenticated, rutasService } from '../../services';
 
 function Rutas() {
@@ -193,6 +194,17 @@ function Rutas() {
   const handleAbrirModal = () => setModalAbierto(true);
   const handleCerrarModal = () => setModalAbierto(false);
   const handleRutaCreada = () => cargarRutas();
+
+  const handleCambiarEstado = async (rutaId, nuevoEstado) => {
+    try {
+      await rutasService.actualizar(rutaId, { estadoRuta: nuevoEstado });
+      await cargarRutas(); // Recargar todas las rutas
+      alert(`✅ Estado actualizado exitosamente. Los estados de la carga y vehículo también fueron actualizados.`);
+    } catch (error) {
+      alert(`❌ Error al cambiar estado: ${error}`);
+      throw error;
+    }
+  };
 
   if (loading) {
     return (
@@ -453,31 +465,12 @@ function Rutas() {
                       </div>
                     </div>
 
-                    {/* Estado */}
+                    {/* Estado con selector */}
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '6px 16px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        backgroundColor:
-                          ruta.estadoRuta === 'planificada' ? '#e3f2fd' :
-                          ruta.estadoRuta === 'en_curso' ? '#fff3cd' :
-                          ruta.estadoRuta === 'completada' ? '#d4edda' :
-                          ruta.estadoRuta === 'cancelada' ? '#f8d7da' : '#e9ecef',
-                        color:
-                          ruta.estadoRuta === 'planificada' ? '#1565c0' :
-                          ruta.estadoRuta === 'en_curso' ? '#856404' :
-                          ruta.estadoRuta === 'completada' ? '#155724' :
-                          ruta.estadoRuta === 'cancelada' ? '#721c24' : '#495057',
-                      }}>
-                        {ruta.estadoRuta === 'planificada' ? '📋 Planificada' :
-                         ruta.estadoRuta === 'en_curso' ? '🚛 En Curso' :
-                         ruta.estadoRuta === 'completada' ? '✅ Completada' :
-                         ruta.estadoRuta === 'cancelada' ? '❌ Cancelada' :
-                         ruta.estadoRuta}
-                      </div>
+                      <SelectorEstadoRuta 
+                        ruta={ruta}
+                        onCambiarEstado={handleCambiarEstado}
+                      />
                     </div>
                   </div>
 

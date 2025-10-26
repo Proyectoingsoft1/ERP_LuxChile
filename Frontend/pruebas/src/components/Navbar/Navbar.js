@@ -20,13 +20,14 @@ function Navbar() {
     }
   };
 
-  // SCRUM-83: Links de navegación
+// SCRUM-83: Links de navegación
   const menuItems = [
-    { path: '/main', label: 'Dashboard'},
-    { path: '/Rutas', label: 'Rutas'},
-    { path: '/Bodegas', label: 'Vehículos'},
-    { path: '/Trabajadores', label: 'Trabajadores' },
-    { path: '/Cuenta', label: 'Mi Cuenta'},
+    { path: '/main', label: 'Dashboard', icon: '📊' },
+    { path: '/Rutas', label: 'Rutas', icon: '🗺️' },
+    { path: '/Bodegas', label: 'Vehículos', icon: '🚚' },
+    { path: '/Cargas', label: 'Cargas', icon: '📦' },
+    { path: '/Trabajadores', label: 'Trabajadores', icon: '👥' },
+    { path: '/Cuenta', label: 'Mi Cuenta', icon: '⚙️' },
   ];
 
   return (
