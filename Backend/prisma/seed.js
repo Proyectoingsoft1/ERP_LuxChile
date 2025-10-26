@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Ìº± Iniciando seed de la base de datos...');
+  console.log('ÔøΩÔøΩÔøΩ Iniciando seed de la base de datos...');
 
   // Limpiar datos existentes
   await prisma.incidente.deleteMany();
@@ -33,6 +33,12 @@ async function main() {
       // Seguridad
       { email: 'diego.morales@luxchile.com', password: hashedPassword, nombre: 'Diego Morales', rol: 'seguridad' },
       { email: 'laura.fernandez@luxchile.com', password: hashedPassword, nombre: 'Laura Fern√°ndez', rol: 'seguridad' },
+      // Conductores (solo para asignar a rutas, no inician sesi√≥n)
+      { email: 'conductor1@luxchile.com', password: hashedPassword, nombre: 'Roberto S√°nchez', rol: 'conductor' },
+      { email: 'conductor2@luxchile.com', password: hashedPassword, nombre: 'Patricia Mu√±oz', rol: 'conductor' },
+      { email: 'conductor3@luxchile.com', password: hashedPassword, nombre: 'Luis Torres', rol: 'conductor' },
+      { email: 'conductor4@luxchile.com', password: hashedPassword, nombre: 'Carmen Vega', rol: 'conductor' },
+      { email: 'conductor5@luxchile.com', password: hashedPassword, nombre: 'Alberto D√≠az', rol: 'conductor' },
     ],
   });
 
@@ -196,16 +202,16 @@ async function main() {
 
   console.log('‚úÖ Incidente de ejemplo creado');
 
-  console.log('\nÌæâ ¬°Seed completado exitosamente!');
-  console.log('\nÌ≥ä Resumen:');
-  console.log('   - 7 usuarios (3 log√≠stica, 2 RRHH, 2 seguridad)');
+  console.log('\nÔøΩÔøΩÔøΩ ¬°Seed completado exitosamente!');
+  console.log('\nÔøΩÔøΩÔøΩ Resumen:');
+  console.log('   - 7 usuarios (3 log√≠stica, 2 RRHH, 2 seguridad, 5 conductores)');
   console.log('   - 3 veh√≠culos');
   console.log('   - 3 cargas');
   console.log('   - 2 rutas');
   console.log('   - 4 sensores');
   console.log('   - 4 c√°maras');
   console.log('   - 1 incidente\n');
-  console.log('Ì¥ê Credenciales de prueba:');
+  console.log('ÔøΩÔøΩÔøΩ Credenciales de prueba:');
   console.log('   Email: juan.perez@luxchile.com');
   console.log('   Password: password123\n');
 }

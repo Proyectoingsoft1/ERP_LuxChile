@@ -12,7 +12,7 @@ model Usuario {
   email     String   @unique
   password  String
   nombre    String
-  rol       String   // 'logistica', 'rrhh', 'seguridad'
+  rol       String   // 'logistica', 'rrhh', 'seguridad', 'conductor'
   activo    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

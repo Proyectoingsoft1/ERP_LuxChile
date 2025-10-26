@@ -152,36 +152,95 @@ export const actualizarRuta = async (req, res) => {
     const { id } = req.params;
     const { estadoRuta, distanciaKm, fechaInicio, fechaFin } = req.body;
 
-    const rutaActualizada = await prisma.ruta.update({
+    // Obtener la ruta actual para comparar estados
+    const rutaActual = await prisma.ruta.findUnique({
       where: { id: parseInt(id) },
-      data: {
-        ...(estadoRuta && { estadoRuta }),
-        ...(distanciaKm && { distanciaKm: parseFloat(distanciaKm) }),
-        ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
-        ...(fechaFin && { fechaFin: new Date(fechaFin) }),
-      },
-      include: {
-        vehiculo: true,
-        carga: true,
-        conductor: { select: { nombre: true, email: true } },
-      },
+      include: { carga: true, vehiculo: true },
     });
 
-    // Si la ruta se completa, actualizar estados
-    if (estadoRuta === 'completada') {
-      await prisma.$transaction([
-        prisma.carga.update({
-          where: { id: rutaActualizada.cargaId },
-          data: { estado: 'entregada' },
-        }),
-        prisma.vehiculo.update({
-          where: { id: rutaActualizada.vehiculoId },
-          data: { estado: 'disponible' },
-        }),
-      ]);
+    if (!rutaActual) {
+      return res.status(404).json({ error: 'Ruta no encontrada' });
     }
 
-    res.json(rutaActualizada);
+    // Validar transiciones de estado
+    if (estadoRuta) {
+      const transicionesValidas = {
+        planificada: ['en_curso', 'cancelada'],
+        en_curso: ['completada', 'cancelada'],
+        completada: [], // No se puede cambiar desde completada
+        cancelada: [], // No se puede cambiar desde cancelada
+      };
+
+      const estadosPermitidos = transicionesValidas[rutaActual.estadoRuta] || [];
+      
+      if (!estadosPermitidos.includes(estadoRuta)) {
+        return res.status(400).json({ 
+          error: `No se puede cambiar de "${rutaActual.estadoRuta}" a "${estadoRuta}"`,
+          estadoActual: rutaActual.estadoRuta,
+          estadosPermitidos,
+        });
+      }
+    }
+
+    // Actualizar ruta en transacción con estados relacionados
+    const resultado = await prisma.$transaction(async (tx) => {
+      // Actualizar la ruta
+      const rutaActualizada = await tx.ruta.update({
+        where: { id: parseInt(id) },
+        data: {
+          ...(estadoRuta && { estadoRuta }),
+          ...(distanciaKm && { distanciaKm: parseFloat(distanciaKm) }),
+          ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
+          ...(fechaFin && { fechaFin: new Date(fechaFin) }),
+        },
+        include: {
+          vehiculo: true,
+          carga: true,
+          conductor: { select: { nombre: true, email: true } },
+        },
+      });
+
+      // Actualizar estados según el nuevo estado de la ruta
+      if (estadoRuta === 'en_curso') {
+        // Ruta iniciada: carga pasa a en_tránsito
+        await tx.carga.update({
+          where: { id: rutaActualizada.cargaId },
+          data: { estado: 'en_transito' },
+        });
+        
+        // Vehículo ya debería estar en_ruta desde la creación
+        await tx.vehiculo.update({
+          where: { id: rutaActualizada.vehiculoId },
+          data: { estado: 'en_ruta' },
+        });
+      } else if (estadoRuta === 'completada') {
+        // Ruta completada: carga entregada, vehículo disponible
+        await tx.carga.update({
+          where: { id: rutaActualizada.cargaId },
+          data: { estado: 'entregada' },
+        });
+        
+        await tx.vehiculo.update({
+          where: { id: rutaActualizada.vehiculoId },
+          data: { estado: 'disponible' },
+        });
+      } else if (estadoRuta === 'cancelada') {
+        // Ruta cancelada: carga vuelve a asignada, vehículo disponible
+        await tx.carga.update({
+          where: { id: rutaActualizada.cargaId },
+          data: { estado: 'asignada' },
+        });
+        
+        await tx.vehiculo.update({
+          where: { id: rutaActualizada.vehiculoId },
+          data: { estado: 'disponible' },
+        });
+      }
+
+      return rutaActualizada;
+    });
+
+    res.json(resultado);
   } catch (error) {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Ruta no encontrada' });

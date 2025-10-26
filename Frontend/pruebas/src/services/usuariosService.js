@@ -20,13 +20,11 @@ const usuariosService = {
   },
 
   /**
-   * Obtener solo conductores (usuarios activos)
+   * Obtener solo conductores activos
    */
   obtenerConductores: async () => {
     try {
-      const response = await apiClient.get('/usuarios', {
-        params: { activo: true }
-      });
+      const response = await apiClient.get('/usuarios/conductores');
       return response.data;
     } catch (error) {
       throw error.response?.data?.error || 'Error al obtener conductores';
