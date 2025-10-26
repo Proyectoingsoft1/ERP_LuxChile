@@ -1,9 +1,9 @@
 function TrabajadorCard({ trabajador, onVerDetalle, onEditar, onEliminar, usuarioActual }) {
   const getRolColor = (rol) => {
     const colores = {
-      logistica: { bg: '#d4edda', color: '#155724', icon: 'íºš' },
-      rrhh: { bg: '#cfe2ff', color: '#084298', icon: 'í±¥' },
-      seguridad: { bg: '#fff3cd', color: '#856404', icon: 'í»¡ï¸' },
+      logistica: { bg: '#d4edda', color: '#155724', icon: 'ğŸšš' },
+      rrhh: { bg: '#cfe2ff', color: '#084298', icon: 'ğŸ‘”' },
+      seguridad: { bg: '#fff3cd', color: '#856404', icon: 'ğŸ‘®' },
     };
     return colores[rol] || colores.logistica;
   };
@@ -66,7 +66,7 @@ function TrabajadorCard({ trabajador, onVerDetalle, onEditar, onEliminar, usuari
             color: '#7f8c8d',
             fontWeight: '500',
           }}>
-            í³§ {trabajador.email}
+            ğŸ“§ {trabajador.email}
           </div>
         </div>
 
@@ -100,11 +100,11 @@ function TrabajadorCard({ trabajador, onVerDetalle, onEditar, onEliminar, usuari
           gap: '8px',
           marginBottom: '8px',
         }}>
-          <span style={{ fontSize: '18px' }}>í³‹</span>
+          <span style={{ fontSize: '18px' }}></span>
           <div>
             <div style={{ fontSize: '12px', color: '#7f8c8d' }}>ID</div>
             <div style={{ fontSize: '16px', fontWeight: '600', color: '#2c3e50' }}>
-              #{trabajador.id}
+              ğŸ†”{trabajador.id}
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ function TrabajadorCard({ trabajador, onVerDetalle, onEditar, onEliminar, usuari
           onMouseEnter={(e) => e.target.style.backgroundColor = '#5568d3'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
         >
-          í±ï¸ Ver
+          ğŸ”Ver
         </button>
 
         <button
@@ -192,7 +192,7 @@ function TrabajadorCard({ trabajador, onVerDetalle, onEditar, onEliminar, usuari
             onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'}
             onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'}
           >
-            í·‘ï¸ Eliminar
+            ğŸ—‘ï¸Eliminar
           </button>
         )}
       </div>

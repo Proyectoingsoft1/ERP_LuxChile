@@ -34,7 +34,7 @@ function FiltrosTrabajadores({ onFiltrar, totalTrabajadores }) {
           color: '#2c3e50',
           margin: 0,
         }}>
-          í´ Filtros
+          âš™ï¸ Filtros
         </h3>
       </div>
 
@@ -67,9 +67,9 @@ function FiltrosTrabajadores({ onFiltrar, totalTrabajadores }) {
           onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
         >
           <option value="todos">Todos los roles</option>
-          <option value="logistica">íºš LogÃ­stica</option>
-          <option value="rrhh">í±¥ RRHH</option>
-          <option value="seguridad">í»¡ï¸ Seguridad</option>
+          <option value="logistica">ğŸšš LogÃ­stica</option>
+          <option value="rrhh">ğŸ‘” RRHH</option>
+          <option value="seguridad">ğŸ‘® Seguridad</option>
         </select>
       </div>
 
@@ -126,7 +126,7 @@ function FiltrosTrabajadores({ onFiltrar, totalTrabajadores }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#5a6268'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#6c757d'}
         >
-          í´„ Limpiar Filtros
+          ğŸ§¹ Limpiar Filtros
         </button>
       </div>
 

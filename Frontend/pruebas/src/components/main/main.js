@@ -5,7 +5,6 @@ import StatCard from "../Dashboard/StatCard";
 import RutasTable from "../Dashboard/RutasTable";
 import FiltrosRutas from "../Dashboard/FiltrosRutas"; // SCRUM-127
 import { getUsuario, isAuthenticated, dashboardService } from '../../services';
-import TokenDebug from "../Login/TokenDebug";
 
 function Main() {
   const navigate = useNavigate();
@@ -255,7 +254,6 @@ function Main() {
           />
         </div>
 
-        <TokenDebug />
       </div>
     </div>
   );
