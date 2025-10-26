@@ -19,7 +19,7 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           fontWeight: '600',
           color: '#555',
         }}>
-          Ì≥ä Estado de Ruta
+          Estado de Ruta
         </label>
         <select
           value={filtros.estado}
@@ -38,8 +38,8 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
         >
           <option value="todas">Todas las rutas</option>
-          <option value="en_curso">Ì∫õ En Curso</option>
-          <option value="planificada">Ì≥ã Planificadas</option>
+          <option value="en_curso">En Curso</option>
+          <option value="planificada">Planificadas</option>
         </select>
       </div>
 
@@ -52,7 +52,7 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           fontWeight: '600',
           color: '#555',
         }}>
-          ÌæØ Prioridad
+          Prioridad
         </label>
         <select
           value={filtros.prioridad}
@@ -71,10 +71,10 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           onBlur={(e) => e.target.style.borderColor = '#dee2e6'}
         >
           <option value="todas">Todas las prioridades</option>
-          <option value="urgente">Ì¥¥ Urgente</option>
-          <option value="alta">Ìø† Alta</option>
-          <option value="media">Ì¥µ Media</option>
-          <option value="baja">Ìø¢ Baja</option>
+          <option value="urgente">Urgente</option>
+          <option value="alta">Alta</option>
+          <option value="media">Media</option>
+          <option value="baja">Baja</option>
         </select>
       </div>
 
@@ -87,7 +87,7 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           fontWeight: '600',
           color: '#555',
         }}>
-          Ì¥ç Buscar
+          Buscar
         </label>
         <input
           type="text"
@@ -130,7 +130,7 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'}
         >
-          Ì¥Ñ Limpiar
+          Limpiar
         </button>
       </div>
 
@@ -148,7 +148,7 @@ function FiltrosRutas({ filtros, onCambioFiltro, totalRutas }) {
         alignItems: 'center',
       }}>
         <span>
-          Ì≥ã <strong>{totalRutas}</strong> {totalRutas === 1 ? 'ruta encontrada' : 'rutas encontradas'}
+          <strong>{totalRutas}</strong> {totalRutas === 1 ? 'ruta encontrada' : 'rutas encontradas'}
         </span>
         {(filtros.estado !== 'todas' || filtros.prioridad !== 'todas' || filtros.busqueda) && (
           <span style={{ color: '#667eea', fontWeight: '600' }}>

@@ -57,7 +57,7 @@ function FormularioVehiculo({ isOpen, onClose, onVehiculoCreado }) {
         dataToSend.ubicacionActualLng = parseFloat(formData.ubicacionActualLng);
       }
 
-      console.log('í³¤ Enviando vehÃ­culo:', dataToSend);
+      console.log('Enviando vehÃ­culo:', dataToSend);
 
       const nuevoVehiculo = await vehiculosService.crear(dataToSend);
       
@@ -124,7 +124,7 @@ function FormularioVehiculo({ isOpen, onClose, onVehiculoCreado }) {
           alignItems: 'center',
         }}>
           <h2 style={{ margin: 0, fontSize: '24px', color: '#2c3e50' }}>
-            íº› Agregar Nuevo VehÃ­culo
+            Agregar Nuevo VehÃ­culo
           </h2>
           <button
             onClick={onClose}
@@ -264,8 +264,8 @@ function FormularioVehiculo({ isOpen, onClose, onVehiculoCreado }) {
                 disabled={loading}
               >
                 <option value="disponible">âœ… Disponible</option>
-                <option value="en_ruta">íº› En Ruta</option>
-                <option value="mantenimiento">í´§ Mantenimiento</option>
+                <option value="en_ruta">ï¿½ï¿½ï¿½ En Ruta</option>
+                <option value="mantenimiento">ï¿½ï¿½ï¿½ Mantenimiento</option>
               </select>
             </div>
 

@@ -52,7 +52,7 @@ function Navbar() {
           }}
           onClick={() => navigate('/main')}
         >
-          ��� ERP LuxChile
+          ERP LuxChile
         </h2>
         
         {/* Usuario y Logout */}
@@ -67,7 +67,7 @@ function Navbar() {
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               borderRadius: '20px',
             }}>
-              <span style={{ fontSize: '18px' }}>���</span>
+              <span style={{ fontSize: '18px' }}></span>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <span style={{ fontWeight: '600', fontSize: '14px' }}>
                   {usuario.nombre}
@@ -95,7 +95,7 @@ function Navbar() {
             onMouseOver={(e) => e.target.style.backgroundColor = '#c0392b'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#e74c3c'}
           >
-            ��� Cerrar sesión
+            Cerrar sesión
           </button>
         </div>
       </div>

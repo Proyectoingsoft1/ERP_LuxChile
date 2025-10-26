@@ -6,7 +6,6 @@ function RutasTable({ rutas, onVerDetalle }) {
         padding: '60px 20px',
         color: '#999',
       }}>
-        <div style={{ fontSize: '64px', marginBottom: '20px' }}>Ì∫õ</div>
         <h3 style={{ color: '#666', fontWeight: '400' }}>No hay rutas activas</h3>
         <p style={{ fontSize: '14px' }}>Las rutas aparecer√°n aqu√≠ cuando sean asignadas</p>
       </div>
@@ -15,10 +14,10 @@ function RutasTable({ rutas, onVerDetalle }) {
 
   const getPrioridadBadge = (prioridad) => {
     const styles = {
-      urgente: { bg: '#fee', color: '#c33', icon: 'Ì¥¥' },
-      alta: { bg: '#fff3cd', color: '#856404', icon: 'Ìø†' },
-      media: { bg: '#e7f3ff', color: '#004085', icon: 'Ì¥µ' },
-      baja: { bg: '#e8f5e9', color: '#2e7d32', icon: 'Ìø¢' },
+      urgente: { bg: '#fee', color: '#c33'},
+      alta: { bg: '#fff3cd', color: '#856404'},
+      media: { bg: '#e7f3ff', color: '#004085'},
+      baja: { bg: '#e8f5e9', color: '#2e7d32'},
     };
     const style = styles[prioridad] || styles.media;
     
@@ -50,7 +49,7 @@ function RutasTable({ rutas, onVerDetalle }) {
         alignItems: 'center',
         gap: '6px',
       }}>
-        <span style={{ fontSize: '16px' }}>{isEnCurso ? 'Ì∫õ' : 'Ì≥ã'}</span>
+        <span style={{ fontSize: '16px' }}>{isEnCurso ? '' : ''}</span>
         {isEnCurso ? 'En Curso' : 'Planificada'}
       </span>
     );
@@ -107,17 +106,16 @@ function RutasTable({ rutas, onVerDetalle }) {
               </td>
               <td style={cellStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '20px' }}>Ì±§</span>
                   <span>{ruta.conductor.nombre}</span>
                 </div>
               </td>
               <td style={cellStyle}>
                 <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                  <div>Ì≥ç <strong>Origen:</strong> {ruta.origen}</div>
-                  <div>Ì≥ç <strong>Destino:</strong> {ruta.destino}</div>
+                  <div><strong>Origen:</strong> {ruta.origen}</div>
+                  <div><strong>Destino:</strong> {ruta.destino}</div>
                   {ruta.distanciaKm && (
                     <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                      Ìª£Ô∏è {ruta.distanciaKm} km
+                      {ruta.distanciaKm} km
                     </div>
                   )}
                 </div>

@@ -4,8 +4,8 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
   const getEstadoColor = (estado) => {
     const colores = {
       disponible: { bg: '#d4edda', color: '#155724', icon: '‚úÖ' },
-      en_ruta: { bg: '#fff3cd', color: '#856404', icon: 'Ì∫õ' },
-      mantenimiento: { bg: '#f8d7da', color: '#721c24', icon: 'Ì¥ß' },
+      en_ruta: { bg: '#fff3cd', color: '#856404', icon: 'ÔøΩÔøΩÔøΩ' },
+      mantenimiento: { bg: '#f8d7da', color: '#721c24', icon: 'ÔøΩÔøΩÔøΩ' },
     };
     return colores[estado] || colores.disponible;
   };
@@ -57,7 +57,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
             color: '#2c3e50',
             marginBottom: '8px',
           }}>
-            Ì∫õ {vehiculo.patente}
+            {vehiculo.patente}
           </div>
           <div style={{
             fontSize: '16px',
@@ -97,7 +97,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
               Ubicaci√≥n GPS
             </div>
             <div style={{ fontSize: '13px', fontWeight: '600', color: '#667eea' }}>
-              Ì≥ç {vehiculo.ubicacionActualLat.toFixed(4)}, {vehiculo.ubicacionActualLng.toFixed(4)}
+              {vehiculo.ubicacionActualLat.toFixed(4)}, {vehiculo.ubicacionActualLng.toFixed(4)}
             </div>
           </div>
         )}
@@ -108,7 +108,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
               Sensores activos
             </div>
             <div style={{ fontSize: '18px', fontWeight: '700', color: '#27ae60' }}>
-              Ì≥° {vehiculo.sensores.length}
+              {vehiculo.sensores.length}
             </div>
           </div>
         )}
@@ -119,7 +119,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
               Rutas asignadas
             </div>
             <div style={{ fontSize: '18px', fontWeight: '700', color: '#e67e22' }}>
-              Ì∑∫Ô∏è {vehiculo.rutas.length}
+              {vehiculo.rutas.length}
             </div>
           </div>
         )}
@@ -148,7 +148,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#5568d3'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#667eea'}
         >
-          Ì±ÅÔ∏è Ver
+          Ver
         </button>
 
         <button
@@ -168,7 +168,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#e67e22'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#f39c12'}
         >
-          ‚úèÔ∏è Editar
+          Editar
         </button>
 
         <button
@@ -188,7 +188,7 @@ function VehiculoCard({ vehiculo, onVerDetalle, onEditar, onEliminar }) {
           onMouseEnter={(e) => e.target.style.backgroundColor = '#c0392b'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#e74c3c'}
         >
-          Ì∑ëÔ∏è Eliminar
+          Eliminar
         </button>
       </div>
     </div>

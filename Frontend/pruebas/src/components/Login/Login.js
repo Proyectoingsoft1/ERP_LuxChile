@@ -93,7 +93,7 @@ function Login() {
 
   return (
     <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Ì∫ö ERP LuxChile</h1>
+      <h1>ERP LuxChile</h1>
       <h2>Inicio de sesi√≥n</h2>
       
       <div style={{ marginBottom: '20px' }}>
@@ -184,7 +184,7 @@ function Login() {
           transition: 'background-color 0.3s',
         }}
       >
-        {loading ? '‚è≥ Iniciando sesi√≥n...' : 'Ì¥ê Iniciar sesi√≥n'}
+        {loading ? '‚è≥ Iniciando sesi√≥n...' : 'Iniciar sesi√≥n'}
       </button>
       
       <div style={{ 
@@ -197,8 +197,8 @@ function Login() {
         textAlign: 'center',
       }}>
         <p style={{ margin: '5px 0' }}><strong>Credenciales de prueba:</strong></p>
-        <p style={{ margin: '5px 0' }}>Ì≥ß juan.perez@luxchile.com</p>
-        <p style={{ margin: '5px 0' }}>Ì¥ë password123</p>
+        <p style={{ margin: '5px 0' }}>juan.perez@luxchile.com</p>
+        <p style={{ margin: '5px 0' }}>password123</p>
       </div>
     </div>
   );

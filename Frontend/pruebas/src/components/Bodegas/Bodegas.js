@@ -242,7 +242,7 @@ function Bodegas() {
               color: '#999',
             }}>
               <div style={{ fontSize: '64px', marginBottom: '20px' }}>
-                {vehiculos.length === 0 ? 'Ì∫õ' : 'Ì¥ç'}
+                {vehiculos.length === 0 ? 'ÔøΩÔøΩÔøΩ' : 'ÔøΩÔøΩÔøΩ'}
               </div>
               <h3 style={{ color: '#666', fontWeight: '400' }}>
                 {vehiculos.length === 0 
@@ -327,9 +327,9 @@ function Bodegas() {
                         vehiculo.estado === 'en_ruta' ? '#856404' :
                         vehiculo.estado === 'mantenimiento' ? '#721c24' : '#495057',
                     }}>
-                      {vehiculo.estado === 'disponible' ? '‚úÖ Disponible' :
-                       vehiculo.estado === 'en_ruta' ? 'Ì∫õ En Ruta' :
-                       vehiculo.estado === 'mantenimiento' ? 'Ì¥ß Mantenimiento' :
+                      {vehiculo.estado === 'disponible' ? 'Disponible' :
+                       vehiculo.estado === 'en_ruta' ? 'En Ruta' :
+                       vehiculo.estado === 'mantenimiento' ? 'Mantenimiento' :
                        vehiculo.estado}
                     </div>
                   </div>
