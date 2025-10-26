@@ -3,9 +3,9 @@ function ModalDetalleTrabajador({ trabajador, onCerrar }) {
 
   const getRolColor = (rol) => {
     const colores = {
-      logistica: { bg: '#d4edda', color: '#155724', icon: '���' },
-      rrhh: { bg: '#cfe2ff', color: '#084298', icon: '���' },
-      seguridad: { bg: '#fff3cd', color: '#856404', icon: '���️' },
+      logistica: { bg: '#d4edda', color: '#155724', icon: '🚚' },
+      rrhh: { bg: '#cfe2ff', color: '#084298', icon: '👔' },
+      seguridad: { bg: '#fff3cd', color: '#856404', icon: '👮' },
     };
     return colores[rol] || colores.logistica;
   };
@@ -156,7 +156,7 @@ function ModalDetalleTrabajador({ trabajador, onCerrar }) {
               alignItems: 'center',
               gap: '8px',
             }}>
-              ��� Información de Contacto
+              📇 Información de Contacto
             </h3>
 
             <div style={{
@@ -173,7 +173,7 @@ function ModalDetalleTrabajador({ trabajador, onCerrar }) {
                   Email
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: '600', color: '#2c3e50' }}>
-                  ��� {trabajador.email}
+                  📧 {trabajador.email}
                 </div>
               </div>
             </div>
@@ -190,7 +190,7 @@ function ModalDetalleTrabajador({ trabajador, onCerrar }) {
               alignItems: 'center',
               gap: '8px',
             }}>
-              ��� Información del Sistema
+              ℹ️ Información del Sistema
             </h3>
 
             <div style={{
@@ -207,7 +207,7 @@ function ModalDetalleTrabajador({ trabajador, onCerrar }) {
                   ID de Usuario
                 </div>
                 <div style={{ fontSize: '18px', fontWeight: '700', color: '#667eea' }}>
-                  #{trabajador.id}
+                  🆔{trabajador.id}
                 </div>
               </div>
 
