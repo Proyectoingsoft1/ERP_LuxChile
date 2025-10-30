@@ -204,7 +204,7 @@ async function main() {
 
   console.log('\n��� ¡Seed completado exitosamente!');
   console.log('\n��� Resumen:');
-  console.log('   - 7 usuarios (3 logística, 2 RRHH, 2 seguridad, 5 conductores)');
+  console.log('   - 12 usuarios (3 logística, 2 RRHH, 2 seguridad, 5 conductores)');
   console.log('   - 3 vehículos');
   console.log('   - 3 cargas');
   console.log('   - 2 rutas');

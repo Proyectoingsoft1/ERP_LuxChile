@@ -9,6 +9,7 @@ import cargasRoutes from './routes/cargas.js';
 import rutasRoutes from './routes/rutas.js';
 import dashboardRoutes from './routes/dashboard.js';
 import usuariosRoutes from './routes/usuarios.js';
+
 // Configurar variables de entorno
 dotenv.config();
 
@@ -36,7 +37,7 @@ app.use((req, res, next) => {
 // Ruta de bienvenida
 app.get('/', (req, res) => {
   res.json({
-    message: 'íºš API ERP LuxChile - Sistema de LogÃ­stica',
+    message: 'ğŸšš API ERP LuxChile - Sistema de LogÃ­stica',
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
@@ -55,6 +56,7 @@ app.use('/api/cargas', cargasRoutes);
 app.use('/api/rutas', rutasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+
 // Ruta de test (sin autenticaciÃ³n)
 app.get('/api/test', (req, res) => {
   res.json({
@@ -82,14 +84,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`\níº€ Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`í³š DocumentaciÃ³n: http://localhost:${PORT}/`);
-  console.log(`í·ª Test endpoint: http://localhost:${PORT}/api/test`);
-  console.log(`í¼ CORS habilitado para: ${corsOptions.origin}`);
-  console.log(`âš™ï¸  Entorno: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`\ní´ Credenciales de prueba:`);
-  console.log(`   Email: juan.perez@luxchile.com`);
-  console.log(`   Password: password123\n`);
-});
+// Solo iniciar servidor si NO estÃ¡ en modo test
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`\nğŸš€ Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`ğŸ“š DocumentaciÃ³n: http://localhost:${PORT}/`);
+    console.log(`ğŸ§ª Test endpoint: http://localhost:${PORT}/api/test`);
+    console.log(`ğŸŒ CORS habilitado para: ${corsOptions.origin}`);
+    console.log(`âš™ï¸  Entorno: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`\nğŸ‘¤ Credenciales de prueba:`);
+    console.log(`   Email: juan.perez@luxchile.com`);
+    console.log(`   Password: password123\n`);
+  });
+}
+
+// Exportar app para testing
+export default app;

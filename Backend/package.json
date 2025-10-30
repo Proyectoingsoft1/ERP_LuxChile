@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest",
+    "test:linux": "NODE_OPTIONS=--experimental-vm-modules jest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
@@ -15,7 +17,12 @@
   "prisma": {
     "seed": "node prisma/seed.js"
   },
-  "keywords": ["express", "prisma", "erp", "logistica"],
+  "keywords": [
+    "express",
+    "prisma",
+    "erp",
+    "logistica"
+  ],
   "author": "Equipo ERP LuxChile",
   "license": "MIT",
   "dependencies": {
@@ -27,7 +34,9 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.1.4",
-    "prisma": "^5.20.0"
+    "prisma": "^5.20.0",
+    "supertest": "^7.1.4"
   }
 }

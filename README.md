@@ -1,98 +1,93 @@
-# ERP LuxChile - Sistema de Gestión Logística
+# 🚚 ERP LuxChile - Sistema de Gestión Logística
 
-Proyecto universitario - Ingeniería de Software I
+Sistema ERP desarrollado para la gestión de operaciones logísticas de LuxChile, incluyendo administración de vehículos, rutas, cargas y trabajadores.
 
-## Estructura del Proyecto
+## 📋 Requisitos Previos
 
-ERP_LuxChile/
-├── Backend/          # API Laravel
-├── Frontend/         # Aplicación React
-└── README.md
+- Node.js (v18 o superior)
+- npm (v9 o superior)
+- Git
 
-## Instalación
+## 🚀 Instalación y Ejecución
 
-### Backend (Laravel)
+### 1️⃣ Clonar el repositorio
+```bash
+git clone https://github.com/[tu-usuario]/ERP_LuxChile.git
+cd ERP_LuxChile
+```
 
+### 2️⃣ Configurar y ejecutar el Backend
+```bash
 cd Backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate:fresh --seed
-php artisan serve
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
+```
 
-API: http://localhost:8000/api
+El backend estará corriendo en: `http://localhost:3000`
 
-### Frontend (React)
+### 3️⃣ Configurar y ejecutar el Frontend
 
-cd Frontend
+**En otra terminal:**
+```bash
+cd Frontend/pruebas
 npm install
 npm start
+```
 
-App: http://localhost:3000
+El frontend estará corriendo en: `http://localhost:3001`
 
-## Usuarios de Prueba
+## 🧪 Ejecutar Pruebas
 
-- Email: juan.perez@empresa.com
-- Password: password123
+### Pruebas Unitarias (Backend)
+```bash
+cd Backend
+npm test
+```
 
-## Equipo
+## 👤 Credenciales de Prueba
+```
+Email: juan.perez@luxchile.com
+Password: password123
+```
 
-- Backend (Laravel): Vicente
-- Frontend (React): [Compañero]
+## 🛠️ Tecnologías Utilizadas
 
-## Repositorio
+### Backend
+- Node.js + Express
+- Prisma ORM
+- SQLite (Desarrollo)
+- JWT para autenticación
+- Jest + Supertest (Testing)
 
-https://github.com/Proyectoingsoft1/ERP_LuxChile
+### Frontend
+- React 19
+- React Router v7
+- Bootstrap 5
+- Axios
+- Google Maps API
 
-
-
-Primera Vez (Solo una vez por PC)
-bash# 1. Clonar el repositorio
-git clone https://github.com/Proyectoingsoft1/ERP_LuxChile.git
-cd ERP_LuxChile
-
-# 2. Instalar dependencias de Laravel
-composer install
-
-# 3. Copiar el archivo de configuración
-cp .env.example .env
-
-# 4. Generar la clave de la aplicación
-php artisan key:generate
-
-# 5. Configurar la base de datos en .env
-# Abrir .env y modificar:
-DB_DATABASE=erp_logistica
-DB_USERNAME=root  # O el usuario que tengan en la universidad
-DB_PASSWORD=      # La contraseña de MySQL
-
-# 6. Crear la base de datos (si no existe)
-mysql -u root -p -e "CREATE DATABASE erp_logistica;"
-
-# 7. Ejecutar migraciones y seeders
-php artisan migrate:fresh --seed
-
-# 8. Iniciar el servidor Laravel
-php artisan serve
-Cada Vez que Trabajen (Días siguientes)
-bash# 1. Ir a la carpeta del proyecto
-cd ERP_LuxChile
-
-# 2. Traer los últimos cambios
-git pull origin main
-
-# 3. Actualizar dependencias si hay cambios
-composer install
-
-# 4. Ejecutar migraciones nuevas (si las hay)
-php artisan migrate
-
-# 5. Iniciar el servidor
-php artisan serve
-El servidor correrá en http://localhost:8000
-
-Importante: Antes de Irte
-bash# Guardar tus cambios
-git add .
-git commit -m "Descripción de lo que hiciste"
-git push origin main
+## 📁 Estructura del Proyecto
+```
+ERP_LuxChile/
+├── Backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.js
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── seed.js
+│   ├── tests/
+│   │   └── api.test.js
+│   └── package.json
+│
+└── Frontend/
+    └── pruebas/
+        ├── src/
+        │   ├── components/
+        │   ├── pages/
+        │   └── App.js
+        └── package.json
